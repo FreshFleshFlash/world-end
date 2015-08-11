@@ -22,3 +22,6 @@
 
 세 번째로, 반응형 웹을 제작하여 모바일에서도 감상할 수 있게끔 하고 싶습니다. 이외에도, 기차 소리의 속도를 스크롤의 속도에 비례하도록 만들고 싶구요. 그리고 여력이 된다면 gif로 첨부한 기존의 연기 애니메이션을 CSS를 통해 재구현하여 좀 더 랜덤하게 다듬어보고 싶습니다. 
 
+
+[대략적인 이미지]
+![world-end](https://github.com/FreshFleshFlash/world-end/blob/master/asset/world-end.png)
