@@ -3,6 +3,9 @@ var str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ru
 $(window).scroll(function() {
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
        //alert("right!");
-       $("body").append(str);
+       setInterval(function() {
+       	$("body").append(str)
+       }, 3000);
+       
    }
 });
