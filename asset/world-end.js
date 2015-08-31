@@ -1,48 +1,75 @@
+// 이게 아닌데.. 여튼  
+
+$(window).scroll(function() {
+	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
+		displayTweets();
+	}
+});
+
 var doc_width = $(window).width();
 var doc_height = $(window).height();
+var fontSize = 20;
+
 var tweets = [];
+var tweetCount = 0;
+
+displayTweets();
+
+function displayTweets() {
 	
-loadTweets();
+	loadTweets(null, function() { 
+		
+		var space = fontSize * 1.5;
+		var top = 20;
+		var left = 0;
+		
+		do { 
+			var t = getNextTweet();
 
-// $(window).scroll(function() {
-// 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
+			t.top = top;
+			t.left = left;
 
-// 	}
-// });
+			$("body").append(t.html());
+
+			top += space;
+			left += doc_width;
+		} while (top + space <= doc_height - 20);
+	});
+}
  
+function getNextTweet() {
+	var t = tweets.splice(0, 1)[0];
+	return t;
+}
+
 function loadTweets(q, callback) {
 
 	twitter("search/tweets", {q: q||"end world", count: 50}, function(result){		
 
 		var data = result.statuses;
 
-		var top = 0;
-		
 		for (var i = data.length - 1; i >= 0; i--) {	
 		
-			var id_str = data[i].id_str;
+			var id_str = data[i].id_str + "_" + tweetCount++;
 			var text = data[i].user.screen_name + " " + data[i].text;
 			
-			var t = new Tweet(id_str, top, text);
+			var t = new Tweet(id_str, text);
 			tweets.push(t);	
-				
-			console.log(t); 
-			$("body").append(t.html());
-
-			top += 20;
 		}
+		if(callback) callback();
 	});
 }
 
-function Tweet(id, top, text) {
-	this.id = id;
-	this.top = top;
+function Tweet(id, text) {
+	this.id = id;	
 	this.text = text;
-	
+	this.top;
+	this.left;
+
 	this.html = function() {
 		var source = $("#div-template").html();
 		var template = Handlebars.compile(source);
-		var context = {div_id: this.id, div_top: this.top, div_text: this.text};
+		var context = {div_id: this.id, div_top: this.top, div_left: this.left, div_text: this.text, div_fontSize: fontSize};
 		var html = template(context);
 		return html;
 	}
