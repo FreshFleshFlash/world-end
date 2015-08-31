@@ -24,3 +24,9 @@ body::-webkit-scrollbar-track {
     background-color: #fff; 
     border-radius: 8px; 
 } 
+
+div.tweet {
+	position: absolute;
+	display: inline-block;
+	white-space: nowrap;
+}
