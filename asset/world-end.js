@@ -15,28 +15,34 @@ function loadTweets(q, callback) {
 	twitter("search/tweets", {q: q||"end world", count: 50}, function(result){		
 
 		var data = result.statuses;
+
+		var top = 0;
 		
-		for (var i = data.length - 1; i >= 0; i--) {			
+		for (var i = data.length - 1; i >= 0; i--) {	
+		
 			var id_str = data[i].id_str;
 			var text = data[i].user.screen_name + " " + data[i].text;
-
-			var t = new Tweet(id_str, text);
+			
+			var t = new Tweet(id_str, top, text);
 			tweets.push(t);	
-	
+				
 			console.log(t); 
 			$("body").append(t.html());
+
+			top += 20;
 		}
 	});
 }
 
-function Tweet(id, text) {
+function Tweet(id, top, text) {
 	this.id = id;
+	this.top = top;
 	this.text = text;
-
+	
 	this.html = function() {
 		var source = $("#div-template").html();
 		var template = Handlebars.compile(source);
-		var context = {div_id: this.id, div_text: this.text};
+		var context = {div_id: this.id, div_top: this.top, div_text: this.text};
 		var html = template(context);
 		return html;
 	}
