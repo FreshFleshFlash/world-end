@@ -1,8 +1,6 @@
-// 이게 아닌데.. 여튼  
-
 $(window).scroll(function() {
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
-		displayTweets();
+		displayTweets($(document).width());
 	}
 });
 
@@ -13,20 +11,26 @@ var fontSize = 20;
 var tweets = [];
 var tweetCount = 0;
 
-displayTweets();
+displayTweets(200);
+getScrollPos();
 
-function displayTweets() {
-	
+function getScrollPos() {
+
+	setInterval(function() {
+		//console.log($(window).scrollLeft());
+	}, 100);
+}
+
+function displayTweets(left) {
+
 	loadTweets(null, function() { 
 		
-		var space = fontSize * 1.5;
-		var top = 20;
-		var left = 0;
+		var space = fontSize * 5;
+		var top = 0;
 		
 		do { 
 			var t = getNextTweet();
 
-			t.top = top;
 			t.left = left;
 
 			$("body").append(t.html());
@@ -51,8 +55,7 @@ function loadTweets(q, callback) {
 		for (var i = data.length - 1; i >= 0; i--) {	
 		
 			var id_str = data[i].id_str + "_" + tweetCount++;
-			var text = data[i].user.screen_name + " " + data[i].text;
-			
+			var text = data[i].user.screen_name + data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
 			var t = new Tweet(id_str, text);
 			tweets.push(t);	
 		}
@@ -63,7 +66,7 @@ function loadTweets(q, callback) {
 function Tweet(id, text) {
 	this.id = id;	
 	this.text = text;
-	this.top;
+	this.top = Math.floor((Math.random() * (doc_height - fontSize*2)) + 0);
 	this.left;
 
 	this.html = function() {
@@ -73,6 +76,33 @@ function Tweet(id, text) {
 		var html = template(context);
 		return html;
 	}
+}
+
+var dateFormat = function(date, format) {
+	var elements = [];
+	elements.push({format:'yyyy', value:fillzero(date.getFullYear())});
+	elements.push({format:'yy', value:fillzero(date.getFullYear()%100)});
+	elements.push({format:'MM', value:fillzero(date.getMonth()+1)});
+	elements.push({format:'dd', value:fillzero(date.getDate())});
+	elements.push({format:'HH', value:fillzero(date.getHours())});
+	elements.push({format:'mm', value:fillzero(date.getMinutes())});
+	elements.push({format:'ss', value:fillzero(date.getSeconds())});
+	elements.push({format:'SSS', value:fillzero(date.getMilliseconds(), 3)});
+	elements.push({format:'e', value:date.getDay()}); 
+	elements.push({format:'E', value:'일월화수목금토'.substring(date.getDay(),date.getDay()+1)});
+
+	elements.forEach(function(e,i){
+		format = format.replace(e.format, e.value);
+	});
+
+	return format;
+}
+
+var fillzero = function(num, cnt) {
+	num = num+'';
+	cnt = cnt ? cnt : Math.floor((num.length+1) / 2) * 2;
+	for (var i=0, len=num.length; i<cnt-len; i++) num = '0' + num;
+	return num;
 }
 
 // twitter api 활용하기
