@@ -1,5 +1,6 @@
 body {
 	white-space: nowrap;
+    overflow-y: hidden;
 }
 
 body::-webkit-scrollbar {

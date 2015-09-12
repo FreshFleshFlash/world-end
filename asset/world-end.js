@@ -15,7 +15,7 @@ function autoScroll() {
 	var div = $(document);
 	setInterval(function(){
 	    var pos = div.scrollLeft();
-	    div.scrollLeft(pos + 10);
+	    div.scrollLeft(pos + 5);
 	}, 10);
 
 	console.log("auto");
