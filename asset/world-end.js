@@ -9,6 +9,17 @@ var tweetCount = 0;
 var scrollPos;
 
 displayTweets(0);
+autoScroll();
+
+function autoScroll() {
+	var div = $(document);
+	setInterval(function(){
+	    var pos = div.scrollLeft();
+	    div.scrollLeft(pos + 10);
+	}, 10);
+
+	console.log("auto");
+}
 
 function getThumbSize() {
 	var arrowWidth = 0;
@@ -26,11 +37,9 @@ function getThumbSize() {
 
 $(window).scroll(function() {
 
-	console.log(getThumbSize());
-
 	scrollPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
 
-	$("#smoke").css("left", scrollPos+getThumbSize());
+	$("#smoke").css("left", scrollPos+getThumbSize()-8);
 
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
 		displayTweets($(document).width());

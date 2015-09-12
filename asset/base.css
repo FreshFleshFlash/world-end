@@ -34,6 +34,5 @@ div.tweet {
 img.smoke { 
     display: block; 
     position: fixed; 
-    left: 0px; 
     bottom: 0px; 
 }
