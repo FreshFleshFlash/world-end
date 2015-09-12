@@ -1,24 +1,44 @@
-$(window).scroll(function() {
-	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
-		displayTweets($(document).width());
-	}
-});
+var viewportWidth = $(window).width();
+var viewportHeight = $(window).height();
 
-var doc_width = $(window).width();
-var doc_height = $(window).height();
 var fontSize = 20;
 
 var tweets = [];
 var tweetCount = 0;
 
-displayTweets(200);
-getScrollPos();
+var scrollPos;
 
-function getScrollPos() {
+displayTweets(0);
 
-	setInterval(function() {
-		//console.log($(window).scrollLeft());
-	}, 100);
+function getThumbSize() {
+	var arrowWidth = 0;
+
+	var contentWidth = $(document).width();
+
+	var viewableRatio = viewportWidth / contentWidth; 
+
+	var scrollBarArea = viewportWidth - arrowWidth * 2; 
+
+	var thumbWidth = scrollBarArea * viewableRatio; 
+
+	return thumbWidth;
+}
+
+$(window).scroll(function() {
+
+	console.log(getThumbSize());
+
+	scrollPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
+
+	$("#smoke").css("left", scrollPos+getThumbSize());
+
+	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
+		displayTweets($(document).width());
+	}
+});
+
+function math_map(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
 function displayTweets(left) {
@@ -36,8 +56,8 @@ function displayTweets(left) {
 			$("body").append(t.html());
 
 			top += space;
-			left += doc_width;
-		} while (top + space <= doc_height - 20);
+			left += viewportWidth;
+		} while (top + space <= viewportHeight - 20);
 	});
 }
  
@@ -55,7 +75,7 @@ function loadTweets(q, callback) {
 		for (var i = data.length - 1; i >= 0; i--) {	
 		
 			var id_str = data[i].id_str + "_" + tweetCount++;
-			var text = data[i].user.screen_name + data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
+			var text = data[i].user.screen_name + " " + data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
 			var t = new Tweet(id_str, text);
 			tweets.push(t);	
 		}
@@ -66,7 +86,7 @@ function loadTweets(q, callback) {
 function Tweet(id, text) {
 	this.id = id;	
 	this.text = text;
-	this.top = Math.floor((Math.random() * (doc_height - fontSize*2)) + 0);
+	this.top = Math.floor((Math.random() * (viewportHeight - fontSize*2)) + 0);
 	this.left;
 
 	this.html = function() {
@@ -78,16 +98,16 @@ function Tweet(id, text) {
 	}
 }
 
-var dateFormat = function(date, format) {
+function dateFormat(date, format) {
 	var elements = [];
-	elements.push({format:'yyyy', value:fillzero(date.getFullYear())});
-	elements.push({format:'yy', value:fillzero(date.getFullYear()%100)});
-	elements.push({format:'MM', value:fillzero(date.getMonth()+1)});
-	elements.push({format:'dd', value:fillzero(date.getDate())});
-	elements.push({format:'HH', value:fillzero(date.getHours())});
-	elements.push({format:'mm', value:fillzero(date.getMinutes())});
-	elements.push({format:'ss', value:fillzero(date.getSeconds())});
-	elements.push({format:'SSS', value:fillzero(date.getMilliseconds(), 3)});
+	elements.push({format:'yyyy', value:fillZero(date.getFullYear())});
+	elements.push({format:'yy', value:fillZero(date.getFullYear()%100)});
+	elements.push({format:'MM', value:fillZero(date.getMonth()+1)});
+	elements.push({format:'dd', value:fillZero(date.getDate())});
+	elements.push({format:'HH', value:fillZero(date.getHours())});
+	elements.push({format:'mm', value:fillZero(date.getMinutes())});
+	elements.push({format:'ss', value:fillZero(date.getSeconds())});
+	elements.push({format:'SSS', value:fillZero(date.getMilliseconds(), 3)});
 	elements.push({format:'e', value:date.getDay()}); 
 	elements.push({format:'E', value:'일월화수목금토'.substring(date.getDay(),date.getDay()+1)});
 
@@ -98,10 +118,10 @@ var dateFormat = function(date, format) {
 	return format;
 }
 
-var fillzero = function(num, cnt) {
-	num = num+'';
+function fillZero(num, cnt) {
+	num = num + '';
 	cnt = cnt ? cnt : Math.floor((num.length+1) / 2) * 2;
-	for (var i=0, len=num.length; i<cnt-len; i++) num = '0' + num;
+	for (var i = 0, len = num.length; i < cnt - len; i++) num = '0' + num;
 	return num;
 }
 

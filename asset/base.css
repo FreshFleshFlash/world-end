@@ -30,3 +30,10 @@ div.tweet {
 	display: inline-block;
 	white-space: nowrap;
 }
+
+img.smoke { 
+    display: block; 
+    position: fixed; 
+    left: 0px; 
+    bottom: 0px; 
+}
