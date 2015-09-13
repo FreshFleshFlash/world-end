@@ -1,51 +1,26 @@
+var trainSound = new Audio("asset/train.mp3");
+trainSound.loop = true;
+
 var fontSize = 20;
 
 var tweets = [];
 var tweetCount = 0;
-
-var started = false;
 
 var scrollPos;
 
 displayTweets(0);
 autoScroll();
 
-function autoScroll() {
-	var div = $(document);
-	setInterval(function(){
-	    var pos = div.scrollLeft();
-	    div.scrollLeft(pos + 2);
-	}, 10);
-}
-
-function getThumbSize() {
-	var arrowWidth = 0;
-
-	var contentWidth = $(document).width();
-
-	var viewableRatio = $(window).width() / contentWidth; 
-
-	var scrollBarArea = $(window).width() - arrowWidth * 2; 
-
-	var thumbWidth = scrollBarArea * viewableRatio; 
-
-	return thumbWidth;
-}
-
 $(window).scroll(function() {
 
 	scrollPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
 
-	$("#smoke").css("left", scrollPos+getThumbSize()-8);
+	$("#smoke").css("left", scrollPos + getThumbSize() - 8);
 
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
 		displayTweets($(document).width());
 	}
 });
-
-function math_map(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-}
 
 function displayTweets(left) {
 
@@ -66,7 +41,19 @@ function displayTweets(left) {
 		} while (top + space <= $(window).height() - 20);
 	});
 }
- 
+
+function autoScroll() {
+	trainSound.play();
+
+	var div = $(document);
+	setInterval(function() {
+	    var pos = div.scrollLeft();
+	    div.scrollLeft(pos + 2);
+	}, 10);
+}
+
+
+
 function getNextTweet() {
 	var t = tweets.splice(0, 1)[0];
 	return t;
@@ -74,7 +61,7 @@ function getNextTweet() {
 
 function loadTweets(q, callback) {
 
-	twitter("search/tweets", {q: q||"end world", count: 50}, function(result){		
+	twitter("search/tweets", {q: q||"world end", count: 50}, function(result){		
 
 		var data = result.statuses;
 
@@ -83,7 +70,7 @@ function loadTweets(q, callback) {
 			var id_str = data[i].id_str + "_" + tweetCount++;
 			var user = data[i].user.screen_name;
 					
-			var user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
+			user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
 
 			var text =  data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
 		
@@ -98,6 +85,7 @@ function loadTweets(q, callback) {
 			var t = new Tweet(id_str, text);
 			tweets.push(t);	
 		}
+
 		if(callback) callback();
 	});
 }
@@ -186,4 +174,22 @@ function twitter(api, params, callback) {
 		jsonp: false,
 		cache: true
 	}).fail(function(xhr){});
+}
+
+function getThumbSize() {
+	var arrowWidth = 0;
+
+	var contentWidth = $(document).width();
+
+	var viewableRatio = $(window).width() / contentWidth; 
+
+	var scrollbarArea = $(window).width() - arrowWidth * 2; 
+
+	var thumbWidth = scrollbarArea * viewableRatio; 
+
+	return thumbWidth;
+}
+
+function math_map(value, input_min, input_max, output_min, output_max) {
+    return output_min + (output_max - output_min) * (value - input_min) / (input_max - input_min);
 }
