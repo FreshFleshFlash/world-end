@@ -1,10 +1,9 @@
-var viewportWidth = $(window).width();
-var viewportHeight = $(window).height();
-
 var fontSize = 20;
 
 var tweets = [];
 var tweetCount = 0;
+
+var started = false;
 
 var scrollPos;
 
@@ -15,10 +14,8 @@ function autoScroll() {
 	var div = $(document);
 	setInterval(function(){
 	    var pos = div.scrollLeft();
-	    div.scrollLeft(pos + 5);
+	    div.scrollLeft(pos + 2);
 	}, 10);
-
-	console.log("auto");
 }
 
 function getThumbSize() {
@@ -26,9 +23,9 @@ function getThumbSize() {
 
 	var contentWidth = $(document).width();
 
-	var viewableRatio = viewportWidth / contentWidth; 
+	var viewableRatio = $(window).width() / contentWidth; 
 
-	var scrollBarArea = viewportWidth - arrowWidth * 2; 
+	var scrollBarArea = $(window).width() - arrowWidth * 2; 
 
 	var thumbWidth = scrollBarArea * viewableRatio; 
 
@@ -65,8 +62,8 @@ function displayTweets(left) {
 			$("body").append(t.html());
 
 			top += space;
-			left += viewportWidth;
-		} while (top + space <= viewportHeight - 20);
+			left += $(window).width();
+		} while (top + space <= $(window).height() - 20);
 	});
 }
  
@@ -84,7 +81,20 @@ function loadTweets(q, callback) {
 		for (var i = data.length - 1; i >= 0; i--) {	
 		
 			var id_str = data[i].id_str + "_" + tweetCount++;
-			var text = data[i].user.screen_name + " " + data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
+			var user = data[i].user.screen_name;
+					
+			var user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
+
+			var text =  data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
+		
+			text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1">$1</a>');
+			
+			text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1">#$1</a>');
+				
+			text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1">@$1</a>');
+
+			text = user + " " + text;
+			
 			var t = new Tweet(id_str, text);
 			tweets.push(t);	
 		}
@@ -95,16 +105,12 @@ function loadTweets(q, callback) {
 function Tweet(id, text) {
 	this.id = id;	
 	this.text = text;
-	this.top = Math.floor((Math.random() * (viewportHeight - fontSize*2)) + 0);
+	this.top = Math.floor((Math.random() * ($(window).height() - fontSize*2)) + 0);
 	this.left;
 
 	this.html = function() {
-		var source = $("#div-template").html();
-		var template = Handlebars.compile(source);
-		var context = {div_id: this.id, div_top: this.top, div_left: this.left, div_text: this.text, div_fontSize: fontSize};
-		var html = template(context);
-		return html;
-	}
+		return '<div id="'+this.id+'" class="tweet" style="top:'+this.top+'px; left:'+this.left+'px; font-size:'+fontSize+'pt">'+this.text+'</div>';
+	};
 }
 
 function dateFormat(date, format) {
@@ -129,7 +135,7 @@ function dateFormat(date, format) {
 
 function fillZero(num, cnt) {
 	num = num + '';
-	cnt = cnt ? cnt : Math.floor((num.length+1) / 2) * 2;
+	cnt = cnt ? cnt : Math.floor((num.length + 1) / 2) * 2;
 	for (var i = 0, len = num.length; i < cnt - len; i++) num = '0' + num;
 	return num;
 }
