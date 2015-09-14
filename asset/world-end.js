@@ -6,21 +6,45 @@ var fontSize = 20;
 var tweets = [];
 var tweetCount = 0;
 
-var scrollPos;
+var thumbPos;
 
-displayTweets(0);
-autoScroll();
+$(document).ready(function() {
+	displayTweets(0);
+	autoScroll();
+});
 
 $(window).scroll(function() {
 
-	scrollPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
+	thumbPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
 
-	$("#smoke").css("left", scrollPos + getThumbSize() - 8);
+	drawSmoke(thumbPos);
 
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
 		displayTweets($(document).width());
 	}
 });
+
+function drawSmoke(thumbPos) {	// not yet
+
+	$("#smoke").css("left", thumbPos + getThumbSize() - 8);
+	$("#myCanvas").css("left", thumbPos);
+	
+	var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+    var centerX = canvas.width / 2;
+    var centerY = canvas.height / 2;
+    var radius = 70;
+
+    context.beginPath();
+    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+
+	var grd = context.createRadialGradient(centerX, centerY, 1, centerX, centerY, 20);
+	grd.addColorStop(0, '#000000');
+	grd.addColorStop(1, '#FFFFFF');
+
+	context.fillStyle = grd;
+	context.fill();
+}
 
 function displayTweets(left) {
 
@@ -51,8 +75,6 @@ function autoScroll() {
 	    div.scrollLeft(pos + 2);
 	}, 10);
 }
-
-
 
 function getNextTweet() {
 	var t = tweets.splice(0, 1)[0];

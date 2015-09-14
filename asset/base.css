@@ -1,30 +1,8 @@
 body {
 	white-space: nowrap;
+    overflow-x: scroll;
     overflow-y: hidden;
 }
-
-body::-webkit-scrollbar {
-    -webkit-appearance: none;
-}
-
-body::-webkit-scrollbar:vertical {
-    width: 11px;
-}
-
-body::-webkit-scrollbar:horizontal {
-    height: 11px;
-}
-
-body::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    border: 2px solid white; /* should match background, can't be transparent */
-    background-color: rgba(0, 0, 0, .5);
-}
-
-body::-webkit-scrollbar-track { 
-    background-color: #fff; 
-    border-radius: 8px; 
-} 
 
 div.tweet {
 	position: absolute;
@@ -36,4 +14,9 @@ img.smoke {
     display: block; 
     position: fixed; 
     bottom: 0px; 
+}
+
+#myCanvas {
+    display: block; 
+    position: fixed; 
 }
