@@ -1,4 +1,4 @@
-var trainSound = new Audio("asset/train.mp3");
+var trainSound = new Audio('asset/train.mp3');
 trainSound.loop = true;
 
 var fontSize = 20;
@@ -11,6 +11,7 @@ var thumbPos;
 $(document).ready(function() {
 	displayTweets(0);
 	autoScroll();
+	//nightTrain();
 });
 
 $(window).scroll(function() {
@@ -26,25 +27,27 @@ $(window).scroll(function() {
 
 function drawSmoke(thumbPos) {	// not yet
 
-	$("#smoke").css("left", thumbPos + getThumbSize() - 8);
-	$("#myCanvas").css("left", thumbPos);
+	$('#chimney').css('left', thumbPos + getThumbSize() - 8);
+	$('#smokeCanvas').css('left', thumbPos);
 	
-	var canvas = document.getElementById('myCanvas');
+	var canvas = document.getElementById('smokeCanvas');
     var context = canvas.getContext('2d');
     var centerX = canvas.width / 2;
     var centerY = canvas.height / 2;
-    var radius = 70;
+    var radius = 20;
 
     context.beginPath();
     context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
 
-	var grd = context.createRadialGradient(centerX, centerY, 1, centerX, centerY, 20);
+	var grd = context.createRadialGradient(centerX, centerY, 1, centerX, centerY, radius);
 	grd.addColorStop(0, '#000000');
 	grd.addColorStop(1, '#FFFFFF');
 
 	context.fillStyle = grd;
 	context.fill();
 }
+
+
 
 function displayTweets(left) {
 
@@ -58,7 +61,7 @@ function displayTweets(left) {
 
 			t.left = left;
 
-			$("body").append(t.html());
+			$('body').append(t.html());
 
 			top += space;
 			left += $(window).width();
@@ -83,7 +86,7 @@ function getNextTweet() {
 
 function loadTweets(q, callback) {
 
-	twitter("search/tweets", {q: q||"world end", count: 50}, function(result){		
+	twitter('search/tweets', {q: q||'world end', count: 50}, function(result){		
 
 		var data = result.statuses;
 
@@ -94,7 +97,7 @@ function loadTweets(q, callback) {
 					
 			user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
 
-			var text =  data[i].text + " [" + dateFormat(new Date(data[i].created_at), "MM.dd. HH:mm:ss")+ "]";
+			var text =  data[i].text + " [" + dateFormat(new Date(data[i].created_at), 'MM.dd. HH:mm:ss')+ ']';
 		
 			text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1">$1</a>');
 			
@@ -196,6 +199,11 @@ function twitter(api, params, callback) {
 		jsonp: false,
 		cache: true
 	}).fail(function(xhr){});
+}
+
+function nightTrain() {
+	$('body').css('background-color', '#000000');
+	$('body').css('color', '#FFFFFF');
 }
 
 function getThumbSize() {

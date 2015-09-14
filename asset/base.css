@@ -10,13 +10,13 @@ div.tweet {
 	white-space: nowrap;
 }
 
-img.smoke { 
+#chimney { 
     display: block; 
     position: fixed; 
     bottom: 0px; 
 }
 
-#myCanvas {
+#smokeCanvas {
     display: block; 
     position: fixed; 
 }
