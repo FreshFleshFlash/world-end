@@ -8,43 +8,86 @@ var tweetCount = 0;
 
 var thumbPos;
 
+var nightHour = 19;
+var dayHour = 6;
+
 $(document).ready(function() {
+
 	displayTweets(0);
 	autoScroll();
-	//nightTrain();
+
+	if(new Date().getHours() >= nightHour || new Date().getHours() < dayHour) nightTrain();
 });
 
 $(window).scroll(function() {
 
 	thumbPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
-
-	drawSmoke(thumbPos);
+	
+	var canvas = document.getElementById('smokeCanvas');
+    var context = canvas.getContext('2d');
+	
+	drawSmoke(canvas, context, thumbPos);
+	//animateSmoke(canvas, context, smoke, new Date().getTime());
 
 	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
 		displayTweets($(document).width());
 	}
 });
 
-function drawSmoke(thumbPos) {	// not yet
+window.requestAnimFrame = (function(callback) {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+    function(callback) {
+     	window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+var smoke = {
+	x: 0,
+	y: 0,
+	radius: 20
+};
+
+function drawSmoke(canvas, context, thumbPos) {	
 
 	$('#chimney').css('left', thumbPos + getThumbSize() - 8);
-	$('#smokeCanvas').css('left', thumbPos);
-	
-	var canvas = document.getElementById('smokeCanvas');
-    var context = canvas.getContext('2d');
-    var centerX = canvas.width / 2;
-    var centerY = canvas.height / 2;
-    var radius = 20;
+	$('#smokeCanvas').css('left', thumbPos + getThumbSize() - 8 - $('#smokeCanvas').width());
+
+    smoke.x = canvas.width - smoke.radius;
+    smoke.y = $(document).height() - $('#chimney').height() - smoke.radius;
 
     context.beginPath();
-    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    context.arc(smoke.x, smoke.y, smoke.radius, 0, 2 * Math.PI, false);
 
-	var grd = context.createRadialGradient(centerX, centerY, 1, centerX, centerY, radius);
-	grd.addColorStop(0, '#000000');
-	grd.addColorStop(1, '#FFFFFF');
+	var gradation = context.createRadialGradient(smoke.x, smoke.y, 1, smoke.x, smoke.y, smoke.radius);
+	gradation.addColorStop(0, '#000000');
+	gradation.addColorStop(1, '#FFFFFF');
 
-	context.fillStyle = grd;
+	context.fillStyle = gradation;
 	context.fill();
+}
+
+function animateSmoke(canvas, context, smoke, startTime) {
+	// update
+	var time = (new Date()).getTime() - startTime;
+
+	var linearSpeed = 100;
+	// pixels / second
+	var newX = smoke.x - linearSpeed * time / 1000;
+
+	//if(newX < canvas.width - smoke.radius) {
+  		smoke.x = newX;
+  		console.log("hi");
+	//}
+
+	// clear
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	drawSmoke(canvas, context, thumbPos);
+
+	// request new frame
+	requestAnimFrame(function() {
+  		animateSmoke(canvas, context, smoke, startTime);
+	});
 }
 
 
