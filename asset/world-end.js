@@ -1,203 +1,89 @@
 var trainSound = new Audio('asset/train.mp3');
 trainSound.loop = true;
 
+var os = "";
+var browser = "";
+
+var nightHour = 25;
+var dayHour = 6;
+
 var fontSize = 20;
 
 var tweets = [];
 var tweetCount = 0;
 
-var thumbPos;
+var thumbLeft = 0;
+var thumbWidth = 0;
 
-var nightHour = 19;
-var dayHour = 6;
+var testStr = "Fusce leo augue, lacinia non lectus vel, bibendum ultricies enim. Nullam elementum urna sed ligula molestie auctor. Curabitur quis elit leo. Maecenas pretium condimentum leo ac dictum. Ut ultricies, arcu vitae egestas scelerisque, tellus sem faucibus metus, ac ultrices diam magna auctor mauris. Mauris ut turpis aliquam tortor pellentesque semper. Vestibulum tincidunt magna at ex ornare fermentum. Mauris a ultrices ligula. Fusce vitae erat sem. Suspendisse nec semper tellus. Pellentesque finibus, nulla vitae pharetra pharetra, nibh ligula blandit ex, quis tincidunt est magna quis eros. Suspendisse eget erat eu nulla ornare efficitur fringilla eu lectus.";
 
 $(document).ready(function() {
+	$('body').css('font-size', fontSize);
 
-	displayTweets(0);
+	detectBrowser();
+	
 	autoScroll();
+
+	$(window).scroll(function() {
+		getThumbInfo();
+		animateSmoke();
+
+		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
+			$('body').append(testStr);
+		}
+	});
 
 	if(new Date().getHours() >= nightHour || new Date().getHours() < dayHour) nightTrain();
 });
 
-$(window).scroll(function() {
-
-	thumbPos = math_map($(window).scrollLeft(), 0, $(document).width()-$(window).width(), 0, $(window).width()-getThumbSize());
-	
-	var canvas = document.getElementById('smokeCanvas');
-    var context = canvas.getContext('2d');
-	
-	drawSmoke(canvas, context, thumbPos);
-	//animateSmoke(canvas, context, smoke, new Date().getTime());
-
-	if($(window).scrollLeft() + $(window).width() == $(document).width()) {
-		displayTweets($(document).width());
-	}
-});
-
-window.requestAnimFrame = (function(callback) {
-    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-    function(callback) {
-     	window.setTimeout(callback, 1000 / 60);
-    };
-})();
-
-var smoke = {
-	x: 0,
-	y: 0,
-	radius: 20
-};
-
-function drawSmoke(canvas, context, thumbPos) {	
-
-	$('#chimney').css('left', thumbPos + getThumbSize() - 8);
-	$('#smokeCanvas').css('left', thumbPos + getThumbSize() - 8 - $('#smokeCanvas').width());
-
-    smoke.x = canvas.width - smoke.radius;
-    smoke.y = $(document).height() - $('#chimney').height() - smoke.radius;
-
-    context.beginPath();
-    context.arc(smoke.x, smoke.y, smoke.radius, 0, 2 * Math.PI, false);
-
-	var gradation = context.createRadialGradient(smoke.x, smoke.y, 1, smoke.x, smoke.y, smoke.radius);
-	gradation.addColorStop(0, '#000000');
-	gradation.addColorStop(1, '#FFFFFF');
-
-	context.fillStyle = gradation;
-	context.fill();
-}
-
-function animateSmoke(canvas, context, smoke, startTime) {
-	// update
-	var time = (new Date()).getTime() - startTime;
-
-	var linearSpeed = 100;
-	// pixels / second
-	var newX = smoke.x - linearSpeed * time / 1000;
-
-	//if(newX < canvas.width - smoke.radius) {
-  		smoke.x = newX;
-  		console.log("hi");
-	//}
-
-	// clear
-	context.clearRect(0, 0, canvas.width, canvas.height);
-
-	drawSmoke(canvas, context, thumbPos);
-
-	// request new frame
-	requestAnimFrame(function() {
-  		animateSmoke(canvas, context, smoke, startTime);
-	});
-}
-
-
-
-function displayTweets(left) {
-
-	loadTweets(null, function() { 
-		
-		var space = fontSize * 5;
-		var top = 0;
-		
-		do { 
-			var t = getNextTweet();
-
-			t.left = left;
-
-			$('body').append(t.html());
-
-			top += space;
-			left += $(window).width();
-		} while (top + space <= $(window).height() - 20);
-	});
-}
-
 function autoScroll() {
-	trainSound.play();
-
-	var div = $(document);
+	$(document).scrollLeft(0);
 	setInterval(function() {
-	    var pos = div.scrollLeft();
-	    div.scrollLeft(pos + 2);
+		var preScroll = $(document).scrollLeft();
+		$(document).scrollLeft(preScroll + 2);
 	}, 10);
 }
 
-function getNextTweet() {
-	var t = tweets.splice(0, 1)[0];
-	return t;
+function animateSmoke() {
+	$('#chimney').css('left', thumbLeft + thumbWidth - 12);
+	$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
+
+	var canvas = document.getElementById('smokeCanvas');
+    var context = canvas.getContext('2d');
 }
 
-function loadTweets(q, callback) {
+function detectBrowser() {
+	var info = navigator.userAgent.toLowerCase();
 
-	twitter('search/tweets', {q: q||'세상', count: 50}, function(result){		
+	if(info.indexOf("macintosh") >= 0) {
+		os = "MACINTOSH";
 
-		var data = result.statuses;
+		if(info.indexOf("chrome") >= 0) browser = "CHROME"
+		else if(info.indexOf("safari") >= 0) browser = "SAFARI";
+		else if(info.indexOf("firefox") >= 0) browser = "FIREFOX";
+	} 
 
-		for (var i = data.length - 1; i >= 0; i--) {	
-		
-			var id_str = data[i].id_str + "_" + tweetCount++;
-			var user = data[i].user.screen_name;
-					
-			user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
-
-			var text =  data[i].text + " [" + dateFormat(new Date(data[i].created_at), 'MM.dd. HH:mm:ss')+ ']';
-		
-			text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1">$1</a>');
-			
-			text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1">#$1</a>');
-				
-			text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1">@$1</a>');
-
-			text = user + " " + text;
-			
-			var t = new Tweet(id_str, text);
-			tweets.push(t);	
-		}
-
-		if(callback) callback();
-	});
+	console.log(info + "\n" + os + "\n" + browser);
 }
 
-function Tweet(id, text) {
-	this.id = id;	
-	this.text = text;
-	this.top = Math.floor((Math.random() * ($(window).height() - fontSize*2)) + 0);
-	this.left;
-
-	this.html = function() {
-		return '<div id="'+this.id+'" class="tweet" style="top:'+this.top+'px; left:'+this.left+'px; font-size:'+fontSize+'pt">'+this.text+'</div>';
-	};
+function getThumbInfo() {
+	var arrowWidth = 0;
+	var scrollbarArea = $(window).width() - arrowWidth * 2;
+	
+	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), 0, $(window).width());
+	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
 }
 
-function dateFormat(date, format) {
-	var elements = [];
-	elements.push({format:'yyyy', value:fillZero(date.getFullYear())});
-	elements.push({format:'yy', value:fillZero(date.getFullYear()%100)});
-	elements.push({format:'MM', value:fillZero(date.getMonth()+1)});
-	elements.push({format:'dd', value:fillZero(date.getDate())});
-	elements.push({format:'HH', value:fillZero(date.getHours())});
-	elements.push({format:'mm', value:fillZero(date.getMinutes())});
-	elements.push({format:'ss', value:fillZero(date.getSeconds())});
-	elements.push({format:'SSS', value:fillZero(date.getMilliseconds(), 3)});
-	elements.push({format:'e', value:date.getDay()}); 
-	elements.push({format:'E', value:'일월화수목금토'.substring(date.getDay(),date.getDay()+1)});
-
-	elements.forEach(function(e,i){
-		format = format.replace(e.format, e.value);
-	});
-
-	return format;
+function math_map(value, input_min, input_max, output_min, output_max) {
+	return output_min + (output_max - output_min) * (value - input_min) / (input_max - input_min);
 }
 
-function fillZero(num, cnt) {
-	num = num + '';
-	cnt = cnt ? cnt : Math.floor((num.length + 1) / 2) * 2;
-	for (var i = 0, len = num.length; i < cnt - len; i++) num = '0' + num;
-	return num;
-}
+function nightTrain() {
+	$('body').css('background-color', 'black');
+	$('body').css('color', 'white');
+}	
 
-// twitter api 활용하기
-var twitterConfig = {	//==>왜 안되지??
+var twitterConfig = {	//==>왜 안 되지??
 	baseUrl: 'https://api.twitter.com/1.1/',
 	consumerKey: 'SEWOpNtRl8aI6ICNqv8Cg',
 	consumerSecret: 'LQ5H3W0ZC4UxTT3vuWHjp7GSUDaq0HWYQoMCxrOvo',
@@ -206,20 +92,20 @@ var twitterConfig = {	//==>왜 안되지??
 };
 
 function twitter(api, params, callback) {
-	
-	if (!api.match(/\.json$/)) api += '.json';
+	if(!api.match(/\.json$/)) api += '.json';
 
 	// 파라미터 기본세팅
-	params.oauth_version = '1.0';
+	params.oauth_cversion = '1.0';
 	params.oauth_signature_method = 'HMAC-SHA1';
-	params.oauth_consumer_key = 'SEWOpNtRl8aI6ICNqv8Cg';//twitterConfig.consumerKey; 
-	params.oauth_token = '632490991-DicI7iYLX5kfGfVfgRPCvAQeDqkXLEAVTtBH9rLb';//twitterConfig.accessToken;
-	
-	if (!params.callback && callback) { // callback을 직접 지정하지 않고 무기명 함수로 줄 경우 자동 생성한다.
+	params.oauth_consumer_key = 'SEWOpNtRl8aI6ICNqv8Cg'; //twitterConfig.consumerKey; 
+	params.oauth_token = '632490991-DicI7iYLX5kfGfVfgRPCvAQeDqkXLEAVTtBH9rLb'; //twitterConfig.accessToken;
+
+	// callback을 직접 지정하지 않고 무기명 함수로 줄 경우 자동 생성한다.
+	if (!params.callback && callback) { 
 		params.callback = 'ssh'+(Math.random()+'').replace('0.','');
 		window[params.callback] = callback;
 	}
-	
+
 	var oauthMessage = {
 		method: 'GET',
 		action: 'https://api.twitter.com/1.1/' + api,//twitterConfig.baseUrl+api,
@@ -235,34 +121,35 @@ function twitter(api, params, callback) {
 
 	// Oauth 인증하여 URL리턴(json type)
 	var jsonUrl = OAuth.addToURL(oauthMessage.action, oauthMessage.parameters);
+
 	$.ajax({
 		type: oauthMessage.method,
 		url: jsonUrl,
 		dataType: 'jsonp',
 		jsonp: false,
 		cache: true
-	}).fail(function(xhr){});
+	}).fail(function(xhr) {});
 }
 
-function nightTrain() {
-	$('body').css('background-color', '#000000');
-	$('body').css('color', '#FFFFFF');
-}
+window.requestAnimFrame = (function(callback) {
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+	function(callback) {
+  		window.setTimeout(callback, 1000 / 60);
+	};
+})();
 
-function getThumbSize() {
-	var arrowWidth = 0;
 
-	var contentWidth = $(document).width();
 
-	var viewableRatio = $(window).width() / contentWidth; 
 
-	var scrollbarArea = $(window).width() - arrowWidth * 2; 
 
-	var thumbWidth = scrollbarArea * viewableRatio; 
 
-	return thumbWidth;
-}
 
-function math_map(value, input_min, input_max, output_min, output_max) {
-    return output_min + (output_max - output_min) * (value - input_min) / (input_max - input_min);
-}
+
+
+
+
+
+
+
+
+

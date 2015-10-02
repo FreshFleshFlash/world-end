@@ -4,6 +4,25 @@ body {
     overflow-y: hidden;
 }
 
+body::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+body::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+
+body::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white; 
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+body::-webkit-scrollbar-track { 
+    background-color: #fff; 
+    border-radius: 8px; 
+} 
+
 div.tweet {
 	position: absolute;
 	display: inline-block;
@@ -20,3 +39,4 @@ div.tweet {
     display: block; 
     position: fixed; 
 }
+
