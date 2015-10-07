@@ -29,10 +29,17 @@ div.tweet {
 	white-space: nowrap;
 }
 
+.hide {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
 #chimney { 
-    display: block; 
     position: fixed; 
-    bottom: 0px; 
+    bottom: 5px; 
 }
 
 #smokeCanvas {

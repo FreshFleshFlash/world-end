@@ -4,52 +4,68 @@ trainSound.loop = true;
 var os = "";
 var browser = "";
 
-var nightHour = 25;
-var dayHour = 6;
+var nightHour = 20;
+var dayHour = -6;
 
 var fontSize = 20;
-
-var tweets = [];
-var tweetCount = 0;
+var gap = fontSize;
 
 var thumbLeft = 0;
 var thumbWidth = 0;
 
-var testStr = "Fusce leo augue, lacinia non lectus vel, bibendum ultricies enim. Nullam elementum urna sed ligula molestie auctor. Curabitur quis elit leo. Maecenas pretium condimentum leo ac dictum. Ut ultricies, arcu vitae egestas scelerisque, tellus sem faucibus metus, ac ultrices diam magna auctor mauris. Mauris ut turpis aliquam tortor pellentesque semper. Vestibulum tincidunt magna at ex ornare fermentum. Mauris a ultrices ligula. Fusce vitae erat sem. Suspendisse nec semper tellus. Pellentesque finibus, nulla vitae pharetra pharetra, nibh ligula blandit ex, quis tincidunt est magna quis eros. Suspendisse eget erat eu nulla ornare efficitur fringilla eu lectus.";
+var twitterConfig = {	
+	baseUrl: 'https://api.twitter.com/1.1/',
+	consumerKey: 'SEWOpNtRl8aI6ICNqv8Cg',
+	consumerSecret: 'LQ5H3W0ZC4UxTT3vuWHjp7GSUDaq0HWYQoMCxrOvo',
+	accessToken: '632490991-DicI7iYLX5kfGfVfgRPCvAQeDqkXLEAVTtBH9rLb',
+	tokenSecret: 'dv6QQhv9Ku1rf8iqD3J1G75PnEsOjOQlM3MaF66WGdP5H'
+};
+
+var twitterConfig2 = {	
+	baseUrl: 'https://api.twitter.com/1.1/',
+	consumerKey: 'tiFWoSb7UgXZajgnrrpYg',
+	consumerSecret: '0Dm49AxaHuzAItiJ2BC0FZuzvnlm5uldNjvTo9CfV8',
+	accessToken: '2197815084-Zg2BiICtp2sxmPExOg0wAtbzEUQsog78vaDSINt',
+	tokenSecret: 'cD7f2mpSLpbMme9oxPiZN631AW5Tfug7B6Ciad7Sz7eJy'
+};
+
+var canvas, context;
+
+$(window).on('beforeunload', function(){
+	$(document).scrollLeft(0);
+});
 
 $(document).ready(function() {
-	$('body').css('font-size', fontSize);
+	canvas = document.getElementById('smokeCanvas');
+	context = canvas.getContext('2d');
 
 	detectBrowser();
-	
 	autoScroll();
 
+	loadTweets(100, true);
+
 	$(window).scroll(function() {
+		$('#chimney').removeClass('hide');
+		$('#chimney').addClass('show');
+		
 		getThumbInfo();
-		animateSmoke();
+
+		$('#chimney').css('left', thumbLeft + thumbWidth - 12);
+		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
-			$('body').append(testStr);
+			loadTweets($(document).width() + 100, false);
 		}
 	});
 
 	if(new Date().getHours() >= nightHour || new Date().getHours() < dayHour) nightTrain();
 });
 
-function autoScroll() {
-	$(document).scrollLeft(0);
+function autoScroll() {	
 	setInterval(function() {
 		var preScroll = $(document).scrollLeft();
 		$(document).scrollLeft(preScroll + 2);
 	}, 10);
-}
-
-function animateSmoke() {
-	$('#chimney').css('left', thumbLeft + thumbWidth - 12);
-	$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
-
-	var canvas = document.getElementById('smokeCanvas');
-    var context = canvas.getContext('2d');
 }
 
 function detectBrowser() {
@@ -63,7 +79,7 @@ function detectBrowser() {
 		else if(info.indexOf("firefox") >= 0) browser = "FIREFOX";
 	} 
 
-	console.log(info + "\n" + os + "\n" + browser);
+	//console.log(info + "\n" + os + "\n" + browser);
 }
 
 function getThumbInfo() {
@@ -83,22 +99,99 @@ function nightTrain() {
 	$('body').css('color', 'white');
 }	
 
-var twitterConfig = {	//==>왜 안 되지??
-	baseUrl: 'https://api.twitter.com/1.1/',
-	consumerKey: 'SEWOpNtRl8aI6ICNqv8Cg',
-	consumerSecret: 'LQ5H3W0ZC4UxTT3vuWHjp7GSUDaq0HWYQoMCxrOvo',
-	accessToken: '632490991-DicI7iYLX5kfGfVfgRPCvAQeDqkXLEAVTtBH9rLb',
-	tokenSecret: 'dv6QQhv9Ku1rf8iqD3J1G75PnEsOjOQlM3MaF66WGdP5H'
-};
+function Tweet(id, text, left, top) {
+	this.id = id;
+	this.text = text;
+	this.top = top;
+	this.left = left;
+	this.html = function() {
+		return '<div id="'+this.id+'" class="tweet" style="top:'+this.top+'px; left:'+this.left+'px; font-size:'+fontSize+'pt">'+this.text+'</div>';
+	};
+}
 
-function twitter(api, params, callback) {
+var tweets = [];
+var data = [];
+var gotNext = true;
+
+var count = 0;
+
+function displayTweets(data, startingLeft) {
+	var lines = [];
+	for(var i = 0; i < 5; i++) {
+		lines[i] = gap + i * 140;
+	}
+
+	var startingTime = new Date(data[0].created_at).getTime();
+
+	for(var i = 0; i < data.length; i++) {		
+		var id = data[i].id_str;
+
+		var user = data[i].user.screen_name;
+		user = '<a href = "http://twitter.com/' + user + '">' + user + '</a>';
+		
+		var text = data[i].text;
+		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1">$1</a>');			
+		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1">#$1</a>');				
+		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1">@$1</a>');
+
+		var time = new Date(data[i].created_at);
+		time = timeFormat(time);
+
+		text = time+ " " + user + " " + text;
+
+		var interval = new Date(data[i].created_at).getTime() - startingTime;
+		var left = startingLeft + interval / 10;
+
+		var lineId = Math.floor(Math.random() * lines.length);
+		var top = lines[lineId];
+		lines.splice(lineId, 1);
+
+		var t = new Tweet(id, text, left, top);
+	
+		$('body').append(t.html());
+	}
+}
+
+function loadTweets(startingLeft, first) {		
+	twitterAPI('search/tweets', {q: 'world end', count: 5}, function(result) {
+		if(!first) {
+			if(result.statuses[0].id_str <= data[4].id_str) {
+				console.log("hmm " + count++);
+				gotNext = false;
+				loadTweets(startingLeft, false);				
+			} else gotNext = true;
+		} 
+
+		if(gotNext) {
+			data = result.statuses.reverse();
+			displayTweets(data, startingLeft);
+		}
+	});
+}
+
+function timeFormat(time) {
+	var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+	var hour = (time.getHours() < 12) ? time.getHours() : time.getHours() - 12;
+	var minute = time.getMinutes();
+	var second = time.getSeconds();
+	var ampm = (time.getHours() < 12) ? "AM" : "PM";
+
+	var day = time.getDate();
+	var month = monthArray[time.getMonth()];
+	var year = time.getFullYear();
+
+	return hour + ":" + minute + " " + ampm + " - " + day + " " + month + " " + year;
+}
+
+function twitterAPI(api, params, callback) {
 	if(!api.match(/\.json$/)) api += '.json';
 
 	// 파라미터 기본세팅
 	params.oauth_cversion = '1.0';
 	params.oauth_signature_method = 'HMAC-SHA1';
-	params.oauth_consumer_key = 'SEWOpNtRl8aI6ICNqv8Cg'; //twitterConfig.consumerKey; 
-	params.oauth_token = '632490991-DicI7iYLX5kfGfVfgRPCvAQeDqkXLEAVTtBH9rLb'; //twitterConfig.accessToken;
+	params.oauth_consumer_key = twitterConfig2.consumerKey; 
+	params.oauth_token = twitterConfig2.accessToken;
 
 	// callback을 직접 지정하지 않고 무기명 함수로 줄 경우 자동 생성한다.
 	if (!params.callback && callback) { 
@@ -108,15 +201,15 @@ function twitter(api, params, callback) {
 
 	var oauthMessage = {
 		method: 'GET',
-		action: 'https://api.twitter.com/1.1/' + api,//twitterConfig.baseUrl+api,
+		action: twitterConfig2.baseUrl + api,
 		parameters: params
 	};
 
 	// Oauth 인증관련
 	OAuth.setTimestampAndNonce(oauthMessage);
 	OAuth.SignatureMethod.sign(oauthMessage, {
-		consumerSecret: 'LQ5H3W0ZC4UxTT3vuWHjp7GSUDaq0HWYQoMCxrOvo',//twitterConfig.consumerSecret,
-		tokenSecret: 'dv6QQhv9Ku1rf8iqD3J1G75PnEsOjOQlM3MaF66WGdP5H'//twitterConfig.tokenSecret
+		consumerSecret: twitterConfig2.consumerSecret,
+		tokenSecret: twitterConfig2.tokenSecret
 	});
 
 	// Oauth 인증하여 URL리턴(json type)
@@ -130,26 +223,3 @@ function twitter(api, params, callback) {
 		cache: true
 	}).fail(function(xhr) {});
 }
-
-window.requestAnimFrame = (function(callback) {
-	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-	function(callback) {
-  		window.setTimeout(callback, 1000 / 60);
-	};
-})();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
