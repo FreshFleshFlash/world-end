@@ -2,6 +2,8 @@ body {
 	white-space: nowrap;
     overflow-x: scroll;
     overflow-y: hidden;
+
+    -ms-overflow-style: scrollbar;
 }
 
 body::-webkit-scrollbar {
@@ -19,7 +21,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 body::-webkit-scrollbar-track { 
-    background-color: #fff; 
+    background-color: white; 
     border-radius: 8px; 
 } 
 
@@ -27,6 +29,7 @@ div.tweet {
 	position: absolute;
 	display: inline-block;
 	white-space: nowrap;
+    z-index: 2;
 }
 
 .hide {
@@ -40,10 +43,20 @@ div.tweet {
 #chimney { 
     position: fixed; 
     bottom: 5px; 
+    z-index: 2;
 }
 
 #smokeCanvas {
     display: block; 
     position: fixed; 
+    z-index: 2;
+}
+
+div.modal-body {
+    color: black;
+}
+
+p {
+    position: absolute;
 }
 
