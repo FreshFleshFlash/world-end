@@ -1,14 +1,12 @@
-var trainSound = new Audio('asset/train.mp3');
-trainSound.loop = true;
-trainSound.volume = 0;
+var bgSound;
 
 var trainSpeed = 1;
 
-var os = '';
-var browser = '';
-var browserType = '';
+var os = "";
+var browser = "";
+var browserType = "";
 
-var nightHour = 20;
+var nightHour = 19;
 var dayHour = 6;
 
 var fontSize;
@@ -32,6 +30,19 @@ $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
 });
 
+function getLocation() {
+	if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        return;
+    }
+}
+
+function showPosition(position) {
+    console.log("Latitude: " + position.coords.latitude + 
+    "Longitude: " + position.coords.longitude); 
+}
+
 $(document).ready(function() {	
 	$('#myModal').modal();
 
@@ -39,21 +50,42 @@ $(document).ready(function() {
 	detectBrowser();
 	resizeSpace();
 
+	if(browserType == "webkit") {
+		bgSound = new Audio('asset/train.mp3');
+		bgSound.volume = 1.0;
+		$('.modal-header').append();
+		$('.modal-body').append("<p>- 알림: 시설 현대화 및 증축 공사 진행 중 / 열차 정상 운행<br/><br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
+		$('.modal-footer').append("<p>stationmaster Kwon Daye</p>");
+	}
+	else if(browserType == "ms") {
+		bgSound = new Audio('asset/boat.mp3');
+		bgSound.volume = 0.1;
+		$('.modal-header').append();
+		$('.modal-body').append();
+		$('.modal-footer').append("<p>captain Kwon Daye</p>");
+	}
+	else {
+		bgSound = new Audio('asset/boat.mp3');
+		bgSound.volume = 0.6;
+		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
+		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / SAFARI</h4>");
+		$('.modal-body').append("<p>Sorry.<br/><br/>Fire has burnt the sail, so there's only a floating boat.<br/>Please use CHROME, IE or SAFARI browser.</p>");
+		$('.modal-footer').append("<p>captain Kwon Daye</p>");
+	}
+
+	bgSound.play();
+	bgSound.loop = true;
+
 	initTweets();
 	autoScroll();
-	trainSound.play();
-
-	if(browserType == 'webkit') $('.modal-body').append('<p>webkit</p>');
-	else if(browserType == 'ms') $('.modal-body').append('<p>ms</p>');
-	else $('.modal-body').append('<p>sorry</p>');
 
 	$(window).scroll(function() {
 		getThumbInfo();
 
-		if(browserType == 'webkit') {
+		if(browserType == "webkit") {
 			$('#chimney').removeClass('hide');
 			$('#chimney').addClass('show');
-		} else if(browserType == 'ms') {
+		} else if(browserType == "ms") {
 			$('#sail').removeClass('hide');
 			$('#sail').addClass('show');
 		}
@@ -73,7 +105,7 @@ $(document).ready(function() {
 			if(!loading) {
 				loadTweets();
 				startSpinner();
-				trainSound.pause();
+				bgSound.pause();
 			}
 		}
 	});
@@ -91,10 +123,14 @@ function dayOrNight() {
 
 	if(isNight) {
 		$('body').css('background-color', 'black');
-		$('body').css('color', 'white');		
+		$('body').css('color', 'white');
+		$('.modal-content').css('background-color', 'white');
+		$('.modal-content').css('color', 'black');	
 	} else {
 		$('body').css('background-color', 'white');
-		$('body').css('color', 'black');		
+		$('body').css('color', 'black');	
+		$('.modal-content').css('background-color', 'white');
+		$('.modal-content').css('color', 'black');	
 	}
 }
 
@@ -157,7 +193,7 @@ function displayTweets(tweets, first) {
 		first = false;
 	} else {
 		stopSpinner();
-		trainSound.play();
+		bgSound.play();
 	}
 
 	loading = false;
@@ -166,9 +202,9 @@ function displayTweets(tweets, first) {
 function getThumbInfo() {
 	var arrowWidth;
 
-	if(browserType == 'webkit') arrowWidth = 0;
-	else if(browserType == 'ms') arrowWidth = 30;
-	else arrowWidth = -10;
+	if(browserType == "webkit") arrowWidth = 0;
+	else if(browserType == "ms") arrowWidth = 30;
+	else arrowWidth = 0;
 
 	var scrollbarArea = $(window).width() - arrowWidth * 2;
 	
