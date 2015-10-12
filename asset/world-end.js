@@ -2,15 +2,14 @@ var trainSound = new Audio('asset/train.mp3');
 trainSound.loop = true;
 trainSound.volume = 0;
 
-var canvas, context;
-
 var trainSpeed = 1;
 
-var os = "";
-var browser = "";
+var os = '';
+var browser = '';
+var browserType = '';
 
-var nightHour = 24;
-var dayHour = -6;
+var nightHour = 20;
+var dayHour = 6;
 
 var fontSize;
 var gap;
@@ -19,42 +18,55 @@ var thumbLeft = 0;
 var thumbWidth = 0;
 
 var loading = false;
+var stop = false;
 
 var maxQueryCount = 10;
 
 var lastQueryTime;
 var keyword = 'world end';
-var koreanKeyword = encodeURI("세상");
+
+var chimneyWidth, chimneyHeight;
+var sailWidth;
 
 $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
 });
 
-$(document).ready(function() {
-	//$('#remocon').modal();
-
-	console.log($(window).height());
+$(document).ready(function() {	
+	$('#myModal').modal();
 
 	dayOrNight();
 	detectBrowser();
 	resizeSpace();
 
-	canvas = document.getElementById('smokeCanvas');
-	context = canvas.getContext('2d');
-	
-	//render();
-
 	initTweets();
 	autoScroll();
 	trainSound.play();
 
+	if(browserType == 'webkit') $('.modal-body').append('<p>webkit</p>');
+	else if(browserType == 'ms') $('.modal-body').append('<p>ms</p>');
+	else $('.modal-body').append('<p>sorry</p>');
+
 	$(window).scroll(function() {
 		getThumbInfo();
 
-		$('#chimney').removeClass('hide');
-		$('#chimney').addClass('show');
+		if(browserType == 'webkit') {
+			$('#chimney').removeClass('hide');
+			$('#chimney').addClass('show');
+		} else if(browserType == 'ms') {
+			$('#sail').removeClass('hide');
+			$('#sail').addClass('show');
+		}
 
-		$('#chimney').css('left', thumbLeft + thumbWidth);
+		chimneyWidth = thumbWidth * 0.05;
+		sailWidth = thumbWidth / 4;
+
+		$('#sail').css('border-left', sailWidth + "px solid #CDCDCD");
+		$('#sail').css('left', thumbLeft + thumbWidth/2 - 0);
+
+		$('#chimney').css('width', chimneyWidth);
+		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 0);
+		
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
 		
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
@@ -74,32 +86,6 @@ function autoScroll() {
 	}, 10);
 }
 
-function detectBrowser() {
-	var info = navigator.userAgent.toLowerCase();
-
-	if(info.indexOf("macintosh") >= 0) {
-		os = "MACINTOSH";
-
-		if(info.indexOf("chrome") >= 0) browser = "CHROME"
-		else if(info.indexOf("safari") >= 0) browser = "SAFARI";
-		else if(info.indexOf("firefox") >= 0) browser = "FIREFOX";
-	} 
-
-	//console.log(info + "\n" + os + "\n" + browser);
-}
-
-function getThumbInfo() {
-	var arrowWidth = 10;
-	var scrollbarArea = $(window).width() - arrowWidth * 2;
-	
-	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), 0, $(window).width());
-	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
-}
-
-function math_map(value, input_min, input_max, output_min, output_max) {
-	return output_min + (output_max - output_min) * (value - input_min) / (input_max - input_min);
-}
-
 function dayOrNight() {
 	var isNight = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour) ? true : false;	
 
@@ -110,6 +96,84 @@ function dayOrNight() {
 		$('body').css('background-color', 'white');
 		$('body').css('color', 'black');		
 	}
+}
+
+function detectBrowser() {
+	var info = navigator.userAgent.toLowerCase();
+
+	if(info.indexOf("chrome") >= 0 || info.indexOf("safari") >= 0) browserType = "webkit";
+	else if(info.indexOf("trident") >= 0) browserType = "ms";
+	else browserType = "others";
+
+	console.log(info + "\n" + browserType);
+}
+
+function displayTweets(tweets, first) {
+	console.log(tweets.length);
+
+	var lines = [];
+	for(var i = 0; i < maxQueryCount; i++) {
+		lines[i] = gap + i * gap*2;
+	}
+
+	var startingTime = new Date(parseDate(tweets[0].created_at)).getTime();
+	var startingLeft = (first) ? 100 : $(document).width() + 100;
+
+	for(var i = 0; i < tweets.length; i++) {		
+		var id = tweets[i].id_str;
+
+		var user = tweets[i].user.screen_name;
+		user = '<a href = "http://twitter.com/' + user + '"target="_blank" onclick="stopTrain()">' + user + '</a>';
+		
+		var text = tweets[i].text;
+		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()">$1</a>');			
+		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()">#$1</a>');				
+		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()">@$1</a>');
+
+		var time = new Date(parseDate(tweets[i].created_at));
+		time = time.toString();
+		time = time.split("(")[0];
+
+		text = time+ " " + user + " " + text;
+
+		var interval = new Date(parseDate(tweets[i].created_at)).getTime() - startingTime;
+		var left = startingLeft + interval / 20;
+
+		var lineId = Math.floor(Math.random() * lines.length);
+		var top = lines[lineId];
+		lines.splice(lineId, 1);
+
+		var t = new Tweet(id, text, left, top);
+	
+		$('body').append(t.html());
+	}
+
+	if(!($(document).width() > $(window).width())) {
+		console.log("append");
+		$('body').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
+	}
+
+	if(first) {
+		first = false;
+	} else {
+		stopSpinner();
+		trainSound.play();
+	}
+
+	loading = false;
+}
+
+function getThumbInfo() {
+	var arrowWidth;
+
+	if(browserType == 'webkit') arrowWidth = 0;
+	else if(browserType == 'ms') arrowWidth = 30;
+	else arrowWidth = -10;
+
+	var scrollbarArea = $(window).width() - arrowWidth * 2;
+	
+	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
+	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
 }
 
 function initTweets() {
@@ -150,60 +214,8 @@ function callAPI(first) {
 	});
 }
 
-function displayTweets(tweets, first) {
-	console.log(tweets.length);
-
-	var lines = [];
-	for(var i = 0; i < maxQueryCount; i++) {
-		lines[i] = gap + i * gap*2;
-	}
-
-	var startingTime = new Date(parseDate(tweets[0].created_at)).getTime();
-	var startingLeft = (first) ? 100 : $(document).width() + 100;
-
-	for(var i = 0; i < tweets.length; i++) {		
-		var id = tweets[i].id_str;
-
-		var user = tweets[i].user.screen_name;
-		user = '<a href = "http://twitter.com/' + user + '" target="_blank">' + user + '</a>';
-		
-		var text = tweets[i].text;
-		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank">$1</a>');			
-		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank">#$1</a>');				
-		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank">@$1</a>');
-
-		var time = new Date(parseDate(tweets[i].created_at));
-		time = time.toString();
-		time = time.split("(")[0];
-
-		text = time+ " " + user + " " + text;
-
-		var interval = new Date(parseDate(tweets[i].created_at)).getTime() - startingTime;
-		var left = startingLeft + interval / 10;
-		// var left = 100;
-
-		var lineId = Math.floor(Math.random() * lines.length);
-		var top = lines[lineId];
-		lines.splice(lineId, 1);
-
-		var t = new Tweet(id, text, left, top);
-	
-		$('body').append(t.html());
-	}
-
-	if(!($(document).width() > $(window).width())) {
-		console.log("append");
-		$('body').append('<p style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
-	}
-
-	if(first) {
-		first = false;
-	} else {
-		stopSpinner();
-		trainSound.play();
-	}
-
-	loading = false;
+function math_map(value, input_min, input_max, output_min, output_max) {
+	return output_min + (output_max - output_min) * (value - input_min) / (input_max - input_min);
 }
 
 function parseDate(strDate) {
@@ -217,6 +229,10 @@ function resizeSpace() {
     $('body').css('font-size', fontSize);
 };
 
+function stopTrain() {
+	//trainSpeed = 0;
+}
+
 function timeFormat(time) {
 	var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -226,12 +242,10 @@ function timeFormat(time) {
 	var ampm = (time.getHours() < 12) ? "AM" : "PM";
 
 	var day = time.getDate();
-	var month = time.getMonth() + 1;// = monthArray[time.getMonth()];
+	var month = monthArray[time.getMonth()];
 	var year = time.getFullYear();
 
-	//return hour + ":" + minute + " " + ampm + " - " + day + " " + month + " " + year;
-
-	return year + "/" + month + "/" + day;
+	return hour + ":" + minute + " " + ampm + " - " + day + " " + month + " " + year;
 }
 
 function Tweet(id, text, left, top) {
@@ -292,7 +306,6 @@ function twitterAPI(api, params, callback) {
 	}).fail(function(xhr) {});
 }
 
-
 var optsColor = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour)? 'white' : 'black';
 
 var opts = {
@@ -324,4 +337,3 @@ function startSpinner() {
 function stopSpinner() {
 	spinner.stop();
 }
-

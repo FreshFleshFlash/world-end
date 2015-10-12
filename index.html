@@ -19,17 +19,25 @@
 </head>
 
 <body>
-    <img id="chimney" class="hide" src="asset/chimney.png"/>
-    <canvas id="smokeCanvas" width="1280" height="800"></canvas>
+    <div id="chimney" class="hide"></div>    
+    <div id="sail" class="hide"></div>
 
-    <div id="remocon" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body"> 
-            <p>remocon</p>
-          </div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+    <canvas id="myCanvas" class="hide"></canvas>
 </body>
 </html>
