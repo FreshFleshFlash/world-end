@@ -1,3 +1,4 @@
+/*151013 Kwon Daye*/
 body {
 	white-space: nowrap;
     position: absolute;
@@ -21,19 +22,7 @@ body.modal-open {
 
 body::-webkit-scrollbar {
     -webkit-appearance: none;
-    height: 12px;
-}
-
-body::-webkit-scrollbar-thumb {
-    background-color: #C1C1C1;
-    border: 1px solid #C1C1C1; 
-    border-radius: 10px;
-}
-
-body::-webkit-scrollbar-thumb:hover {
-    background-color: #7D7D7D;
-    border: 1px solid #6F6F6F; 
-    border-radius: 10px;
+    height: 16px;
 }
 
 body::-webkit-scrollbar-track { 
@@ -41,6 +30,26 @@ body::-webkit-scrollbar-track {
     border: 1px solid #E8E8E8;
     border-radius: 0px; 
 } 
+
+body::-webkit-scrollbar-thumb {
+    background-color: #C1C1C1;
+    border: 3px solid transparent; 
+    border-radius: 10px;     
+    background-clip: content-box;
+    height: 8px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #7D7D7D;
+}
+
+body.night::-webkit-scrollbar-thumb {
+    background-color: #7D7D7D;
+}
+
+body.night::-webkit-scrollbar-thumb:hover {
+    background-color: #393939;
+}
 
 div.tweet {
     display: inline-block;
@@ -60,7 +69,7 @@ div.tweet {
 #chimney {
     position: fixed; 
     background-color: #C1C1C1;
-    border: 1px solid #C1C1C1;
+    border: 0px solid transparent;
     border-radius: 5px;
     bottom: 1%; 
     width: 1.5%;
@@ -68,14 +77,18 @@ div.tweet {
     z-index: 2;
 }
 
+#chimney.night {
+    background-color: #7D7D7D;
+}
+
 #sail {
     position: fixed;
-    bottom: 1%;
+    bottom: 2%;
     width: 0;
     height: 0;
-    border-top: 80px solid transparent;
+    border-top: 100px solid transparent;
     border-left: 100px solid #CDCDCD;
-    border-bottom: 80px solid transparent;
+    border-bottom: 50px solid transparent;
     z-index: 2;
 }
 

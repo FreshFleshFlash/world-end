@@ -1,3 +1,4 @@
+/*151013 Kwon Daye*/
 var bgSound;
 
 var trainSpeed = 1;
@@ -30,19 +31,6 @@ $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
 });
 
-function getLocation() {
-	if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else { 
-        return;
-    }
-}
-
-function showPosition(position) {
-    console.log("Latitude: " + position.coords.latitude + 
-    "Longitude: " + position.coords.longitude); 
-}
-
 $(document).ready(function() {	
 	$('#myModal').modal();
 
@@ -52,29 +40,32 @@ $(document).ready(function() {
 
 	if(browserType == "webkit") {
 		bgSound = new Audio('asset/train.mp3');
-		bgSound.volume = 1.0;
-		$('.modal-header').append();
-		$('.modal-body').append("<p>- 알림: 시설 현대화 및 증축 공사 진행 중 / 열차 정상 운행<br/><br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
-		$('.modal-footer').append("<p>stationmaster Kwon Daye</p>");
+		bgSound.volume = 0.6;
+		bgSound.play();
+		bgSound.loop = true;
+		
+		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
+		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 진행 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
+		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
 	else if(browserType == "ms") {
 		bgSound = new Audio('asset/boat.mp3');
-		bgSound.volume = 0.1;
-		$('.modal-header').append();
-		$('.modal-body').append();
-		$('.modal-footer').append("<p>captain Kwon Daye</p>");
+		bgSound.volume = 0.6;
+		bgSound.play();
+		bgSound.loop = true;
+		
+		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
+		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 진행 중 / 선박 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 19:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME or SAFARI!</p>");
+		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
 	else {
-		bgSound = new Audio('asset/boat.mp3');
-		bgSound.volume = 0.6;
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / SAFARI</h4>");
-		$('.modal-body').append("<p>Sorry.<br/><br/>Fire has burnt the sail, so there's only a floating boat.<br/>Please use CHROME, IE or SAFARI browser.</p>");
-		$('.modal-footer').append("<p>captain Kwon Daye</p>");
+		$('.modal-body').append("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE or SAFARI browser.</p>");
+		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
-
-	bgSound.play();
-	bgSound.loop = true;
 
 	initTweets();
 	autoScroll();
@@ -97,7 +88,7 @@ $(document).ready(function() {
 		$('#sail').css('left', thumbLeft + thumbWidth/2 - 0);
 
 		$('#chimney').css('width', chimneyWidth);
-		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 0);
+		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
 		
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
 		
@@ -122,6 +113,9 @@ function dayOrNight() {
 	var isNight = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour) ? true : false;	
 
 	if(isNight) {
+		$('body').addClass('night');
+		$('#chimney').addClass('night');
+
 		$('body').css('background-color', 'black');
 		$('body').css('color', 'white');
 		$('.modal-content').css('background-color', 'white');
@@ -260,7 +254,7 @@ function parseDate(strDate) {
 } 
 
 function resizeSpace() {
-	gap = $(window).height() / (maxQueryCount * 2 + 1);
+	gap = $(window).height() / (maxQueryCount * 2 + 2);
 	fontSize = gap * 0.8;
     $('body').css('font-size', fontSize);
 };
