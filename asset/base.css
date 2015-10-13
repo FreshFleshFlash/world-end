@@ -1,4 +1,4 @@
-/*151013 Kwon Daye*/
+/*15-10-13 Kwon Daye*/
 body {
 	white-space: nowrap;
     position: absolute;
@@ -81,14 +81,21 @@ div.tweet {
     background-color: #7D7D7D;
 }
 
-#sail {
+#mast {
     position: fixed;
-    bottom: 2%;
+    bottom: 0.7%;
+    width: 10px;
+    height: 200px;
+    background-color: #CDCDCD;
+    z-index: 2;
+}
+
+div.sail {
+    position: fixed;
     width: 0;
     height: 0;
-    border-top: 100px solid transparent;
-    border-left: 100px solid #CDCDCD;
-    border-bottom: 50px solid transparent;
+    z-index: 2;
+    border-bottom: 190px solid #CDCDCD;
     z-index: 2;
 }
 

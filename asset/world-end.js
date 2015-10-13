@@ -1,4 +1,4 @@
-/*151013 Kwon Daye*/
+/*15-10-13 Kwon Daye*/
 var bgSound;
 
 var trainSpeed = 1;
@@ -7,7 +7,7 @@ var os = "";
 var browser = "";
 var browserType = "";
 
-var nightHour = 19;
+var nightHour = 25;
 var dayHour = 6;
 
 var fontSize;
@@ -25,7 +25,7 @@ var lastQueryTime;
 var keyword = 'world end';
 
 var chimneyWidth, chimneyHeight;
-var sailWidth;
+var mastWidth, sailWidth;
 
 $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
@@ -46,7 +46,7 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 진행 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
 	else if(browserType == "ms") {
@@ -57,13 +57,13 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 진행 중 / 선박 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 19:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME or SAFARI!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 선박 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 19:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME, OPERA or SAFARI!</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
 	else {
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
-		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / SAFARI</h4>");
-		$('.modal-body').append("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE or SAFARI browser.</p>");
+		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / OPERA / SAFARI</h4>");
+		$('.modal-body').append("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE, OPERA or SAFARI browser.</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	}
 
@@ -77,15 +77,25 @@ $(document).ready(function() {
 			$('#chimney').removeClass('hide');
 			$('#chimney').addClass('show');
 		} else if(browserType == "ms") {
-			$('#sail').removeClass('hide');
-			$('#sail').addClass('show');
+			$('#mast').removeClass('hide');
+			$('#mast').addClass('show');
+			$('.sail').removeClass('hide');
+			$('.sail').addClass('show');
 		}
 
 		chimneyWidth = thumbWidth * 0.05;
-		sailWidth = thumbWidth / 4;
+		mastWidth = thumbWidth * 0.03;
+		sailWidth = thumbWidth * 0.25;
 
-		$('#sail').css('border-left', sailWidth + "px solid #CDCDCD");
-		$('#sail').css('left', thumbLeft + thumbWidth/2 - 0);
+		$('#mast').css('width', mastWidth);
+		$('#mast').css('left', thumbLeft + thumbWidth/2 - mastWidth/2);
+
+		$('.sail').css('top', $('#mast').offset().top);
+		$('#leftSail').css('border-left', sailWidth + "px solid transparent");
+		$('#leftSail').css('left', thumbLeft + thumbWidth/2 - sailWidth - mastWidth);
+
+		$('#rightSail').css('border-right', sailWidth + "px solid transparent");
+		$('#rightSail').css('left', thumbLeft + thumbWidth/2 + mastWidth);
 
 		$('#chimney').css('width', chimneyWidth);
 		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
