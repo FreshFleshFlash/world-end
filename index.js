@@ -7,7 +7,7 @@ var os = "";
 var browser = "";
 var browserType = "";
 
-var nightHour = 25;
+var nightHour = 28;
 var dayHour = 6;
 
 var fontSize;
@@ -46,10 +46,9 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 19:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
-	}
-	else if(browserType == "ms") {
+	} else if(browserType == "ms") {
 		bgSound = new Audio('asset/boat.mp3');
 		bgSound.volume = 0.6;
 		bgSound.play();
@@ -57,10 +56,9 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 선박 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 19:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME, OPERA or SAFARI!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME, OPERA or SAFARI!</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
-	}
-	else {
+	} else {
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / OPERA / SAFARI</h4>");
 		$('.modal-body').append("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE, OPERA or SAFARI browser.</p>");
@@ -72,7 +70,7 @@ $(document).ready(function() {
 
 	$(window).scroll(function() {
 		getThumbInfo();
-
+	
 		if(browserType == "webkit") {
 			$('#chimney').removeClass('hide');
 			$('#chimney').addClass('show');
@@ -85,23 +83,22 @@ $(document).ready(function() {
 
 		chimneyWidth = thumbWidth * 0.05;
 		mastWidth = thumbWidth * 0.03;
-		sailWidth = thumbWidth * 0.25;
+		sailWidth = thumbWidth * 0.35;
 
 		$('#mast').css('width', mastWidth);
 		$('#mast').css('left', thumbLeft + thumbWidth/2 - mastWidth/2);
 
 		$('.sail').css('top', $('#mast').offset().top);
 		$('#leftSail').css('border-left', sailWidth + "px solid transparent");
-		$('#leftSail').css('left', thumbLeft + thumbWidth/2 - sailWidth - mastWidth);
+		$('#leftSail').css('left', thumbLeft + thumbWidth/2 - sailWidth - mastWidth*1.5);
 
 		$('#rightSail').css('border-right', sailWidth + "px solid transparent");
-		$('#rightSail').css('left', thumbLeft + thumbWidth/2 + mastWidth);
+		$('#rightSail').css('left', thumbLeft + thumbWidth/2 + mastWidth*1.5);
 
 		$('#chimney').css('width', chimneyWidth);
+		$('#chimney').css('height', chimneyWidth * 1.5);
 		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
-		
-		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - $('#smokeCanvas').width());
-		
+				
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {
 				loadTweets();
@@ -264,8 +261,8 @@ function parseDate(strDate) {
 } 
 
 function resizeSpace() {
-	gap = $(window).height() / (maxQueryCount * 2 + 2);
-	fontSize = gap * 0.8;
+	gap = $(window).height() / (maxQueryCount * 2 + 1);
+	fontSize = gap * 0.7;
     $('body').css('font-size', fontSize);
 };
 
@@ -309,13 +306,13 @@ var myTwitterConfig = {
 function twitterAPI(api, params, callback) {
 	if(!api.match(/\.json$/)) api += '.json';
 
-	// 파라미터 기본세팅
+	// �뚮씪誘명꽣 湲곕낯�명똿
 	params.oauth_cversion = '1.0';
 	params.oauth_signature_method = 'HMAC-SHA1';
 	params.oauth_consumer_key = myTwitterConfig.consumerKey; 
 	params.oauth_token = myTwitterConfig.accessToken;
 
-	// callback을 직접 지정하지 않고 무기명 함수로 줄 경우 자동 생성한다.
+	// callback�� 吏곸젒 吏��뺥븯吏� �딄퀬 臾닿린紐� �⑥닔濡� 以� 寃쎌슦 �먮룞 �앹꽦�쒕떎.
 	if (!params.callback && callback) { 
 		params.callback = 'ssh'+(Math.random()+'').replace('0.','');
 		window[params.callback] = callback;
@@ -327,14 +324,14 @@ function twitterAPI(api, params, callback) {
 		parameters: params
 	};
 
-	// Oauth 인증관련
+	// Oauth �몄쬆愿���
 	OAuth.setTimestampAndNonce(oauthMessage);
 	OAuth.SignatureMethod.sign(oauthMessage, {
 		consumerSecret: myTwitterConfig.consumerSecret,
 		tokenSecret: myTwitterConfig.tokenSecret
 	});
 
-	// Oauth 인증하여 URL리턴(json type)
+	// Oauth �몄쬆�섏뿬 URL由ы꽩(json type)
 	var jsonUrl = OAuth.addToURL(oauthMessage.action, oauthMessage.parameters);
 
 	$.ajax({
