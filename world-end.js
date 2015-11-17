@@ -8,7 +8,7 @@ var browser = "";
 var browserType = "";
 
 var nightHour = 18;
-var dayHour = 6;
+var dayHour = -6;
 
 var fontSize;
 var gap;
@@ -28,7 +28,7 @@ var mastWidth, sailWidth;
 
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
-var smokeX, smokeY;
+var smokeX, smokeY, smokeR;
 var smokeColor;
 
 $(window).on('beforeunload', function(){
@@ -113,7 +113,8 @@ $(document).ready(function() {
 
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
 		smokeX = canvas.width - chimneyWidth;
-		smokeY = canvas.height - chimneyHeight - 15;
+		smokeY = canvas.height - chimneyHeight - 10;
+		smokeR = chimneyWidth / 5;
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {
@@ -436,8 +437,8 @@ function Particle(x, y) {
 	this.x = x; 
 	this.y = y;
 	this.toX = -3;
-	this.toY = -2;
-	this.radius = 5;
+	this.toY = -1.7;
+	this.radius = smokeR;
 	this.alpha = 1;
 }
 

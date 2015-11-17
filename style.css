@@ -103,4 +103,5 @@ div.sail {
 
 #smokeCanvas {
     position: fixed;
+    z-index: 2;
 }
