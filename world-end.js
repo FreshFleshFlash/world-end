@@ -7,8 +7,8 @@ var os = "";
 var browser = "";
 var browserType = "";
 
-var nightHour = 28;
-var dayHour = 6;
+var nightHour = 18;
+var dayHour = -6;
 
 var fontSize;
 var gap;
@@ -20,25 +20,35 @@ var loading = false;
 var stop = false;
 
 var maxQueryCount = 10;
-
 var lastQueryTime;
 var keyword = 'world end';
 
 var chimneyWidth, chimneyHeight;
 var mastWidth, sailWidth;
 
+var particles = [];
+var lastGeneratingTime = new Date().getTime();
+var smokeX, smokeY;
+
 $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
 });
 
-$(document).ready(function() {	
+$(document).ready(function() {
 	$('#myModal').modal();
 
 	dayOrNight();
-	detectBrowser();
 	resizeSpace();
+	detectBrowser();
 
 	if(browserType == "webkit") {
+		var canvas = document.getElementById('smokeCanvas');
+		var context = canvas.getContext('2d');
+		canvas.width = $('body').width();
+		canvas.height = $('body').height();
+		
+		renderSmoke(canvas, context);
+
 		bgSound = new Audio('asset/train.mp3');
 		bgSound.volume = 0.6;
 		bgSound.play();
@@ -46,7 +56,7 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- Wanna take a BOAT? Be an INTERNET EXPLORER!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- If you prefer to take a boat, please use INTERNET EXPLORER</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	} else if(browserType == "ms") {
 		bgSound = new Audio('asset/boat.mp3');
@@ -56,7 +66,7 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- Wanna take a TRAIN? Use CHROME, OPERA or SAFARI!</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- If you prefer to take a train, please use CHROME, OPERA or SAFARI</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	} else {
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
@@ -82,6 +92,7 @@ $(document).ready(function() {
 		}
 
 		chimneyWidth = thumbWidth * 0.05;
+		chimneyHeight = chimneyWidth * 1.5;
 		mastWidth = thumbWidth * 0.03;
 		sailWidth = thumbWidth * 0.35;
 
@@ -96,9 +107,13 @@ $(document).ready(function() {
 		$('#rightSail').css('left', thumbLeft + thumbWidth/2 + mastWidth*1.5);
 
 		$('#chimney').css('width', chimneyWidth);
-		$('#chimney').css('height', chimneyWidth * 1.5);
+		$('#chimney').css('height', chimneyHeight);
 		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
-				
+
+		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
+		smokeX = canvas.width - chimneyWidth;
+		smokeY = canvas.height - chimneyHeight - 15;
+
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {
 				loadTweets();
@@ -374,3 +389,64 @@ function startSpinner() {
 function stopSpinner() {
 	spinner.stop();
 }
+
+function renderSmoke(canvas, context) {
+	var smokeX = canvas.width - 15;
+	var smokeY = canvas.height - 40;
+	var alpha = 1;
+
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	generateParticle(smokeX, smokeY);
+
+	for(var i = 0; i < particles.length; i++) {
+	 	if(particles[i].y < 100) {
+	 		particles.splice(i, 1);
+	 	} else {
+			alpha = (particles[i].alpha > 0) ? particles[i].alpha : 0;	
+
+			context.save();
+			context.globalAlpha = alpha;
+			context.beginPath();
+			context.arc(particles[i].x, particles[i].y, particles[i].radius, 0, 2 * Math.PI, false);
+			context.fillStyle = 'black';
+			context.fill();
+			context.restore();
+
+          	particles[i].animateParticle();
+    	}
+	 }
+
+	requestAnimFrame(function() {
+    	renderSmoke(canvas, context)
+    });
+}
+
+function generateParticle(x, y) {
+	if(new Date().getTime() > lastGeneratingTime + 500) {
+		lastGeneratingTime = new Date().getTime();
+		particles.push(new Particle(smokeX, smokeY));
+	}
+}
+
+function Particle(x, y) {
+	this.x = x; 
+	this.y = y;
+	this.toX = -3;
+	this.toY = -2;
+	this.radius = 5;
+	this.alpha = 1;
+}
+
+Particle.prototype.animateParticle = function() {
+	this.x += this.toX;
+	this.y += this.toY;
+	this.radius += 0.2;
+	this.alpha -= 0.005;
+}
+
+window.requestAnimFrame = (function(callback) {
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+    function(callback) {
+    	window.setTimeout(callback, 1000 / 60);
+    };
+})();
