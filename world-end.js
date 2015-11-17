@@ -8,7 +8,7 @@ var browser = "";
 var browserType = "";
 
 var nightHour = 18;
-var dayHour = -6;
+var dayHour = 6;
 
 var fontSize;
 var gap;
@@ -29,6 +29,7 @@ var mastWidth, sailWidth;
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
 var smokeX, smokeY;
+var smokeColor;
 
 $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
@@ -137,12 +138,15 @@ function dayOrNight() {
 	if(isNight) {
 		$('body').addClass('night');
 		$('#chimney').addClass('night');
+		smokeColor = 'white';
 
 		$('body').css('background-color', 'black');
 		$('body').css('color', 'white');
 		$('.modal-content').css('background-color', 'white');
 		$('.modal-content').css('color', 'black');	
 	} else {
+		smokeColor = 'black';
+
 		$('body').css('background-color', 'white');
 		$('body').css('color', 'black');	
 		$('.modal-content').css('background-color', 'white');
@@ -408,7 +412,7 @@ function renderSmoke(canvas, context) {
 			context.globalAlpha = alpha;
 			context.beginPath();
 			context.arc(particles[i].x, particles[i].y, particles[i].radius, 0, 2 * Math.PI, false);
-			context.fillStyle = 'black';
+			context.fillStyle = smokeColor;
 			context.fill();
 			context.restore();
 
