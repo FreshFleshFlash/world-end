@@ -10,15 +10,6 @@ body {
     -ms-overflow-style: scrollbar;
 }
 
-body.modal-open {
-    overflow-x: scroll;
-    overflow-y: hidden;
-}
-
-.modal-content {
-    font-size: 12pt;
-}
-
 body::-webkit-scrollbar {
     -webkit-appearance: none;
     height: 16px;
@@ -48,6 +39,15 @@ body.night::-webkit-scrollbar-thumb {
 
 body.night::-webkit-scrollbar-thumb:hover {
     background-color: #393939;
+}
+
+body.modal-open {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.modal-content {
+    font-size: 12pt;
 }
 
 div.tweet {

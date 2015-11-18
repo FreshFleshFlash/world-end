@@ -97,14 +97,14 @@ $(document).ready(function() {
 		sailWidth = thumbWidth * 0.35;
 
 		$('#mast').css('width', mastWidth);
-		$('#mast').css('left', thumbLeft + thumbWidth/2 - mastWidth/2);
+		$('#mast').css('left', thumbLeft + thumbWidth / 2 - mastWidth / 2);
 
 		$('.sail').css('top', $('#mast').offset().top);
 		$('#leftSail').css('border-left', sailWidth + "px solid transparent");
-		$('#leftSail').css('left', thumbLeft + thumbWidth/2 - sailWidth - mastWidth*1.5);
+		$('#leftSail').css('left', thumbLeft + thumbWidth / 2 - sailWidth - mastWidth * 1.5);
 
 		$('#rightSail').css('border-right', sailWidth + "px solid transparent");
-		$('#rightSail').css('left', thumbLeft + thumbWidth/2 + mastWidth*1.5);
+		$('#rightSail').css('left', thumbLeft + thumbWidth / 2 + mastWidth * 1.5);
 
 		$('#chimney').css('width', chimneyWidth);
 		$('#chimney').css('height', chimneyHeight);
@@ -253,7 +253,7 @@ var tweets = [];
 function callAPI(first) {
 	console.log("callAPI " + callCount++);
 
-	var sinceId = (first) ? 0 : tweets[tweets.length-1].id_str;
+	var sinceId = (first) ? 0 : tweets[tweets.length - 1].id_str;
 
 	twitterAPI('search/tweets', {q: keyword, count: maxQueryCount, since_id: sinceId}, function(result) {
 		lastQueryTime = new Date().getTime();
