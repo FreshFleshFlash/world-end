@@ -168,7 +168,7 @@ function displayTweets(tweets, first) {
 
 	var lines = [];
 	for(var i = 0; i < maxQueryCount; i++) {
-		lines[i] = gap + i * gap * 2;
+		lines[i] = gap * 2 + i * gap * 2;
 	}
 
 	var startingTime = new Date(parseDate(tweets[0].created_at)).getTime();
@@ -279,7 +279,8 @@ function parseDate(strDate) {
 } 
 
 function resizeSpace() {
-	gap = $(window).height() / (maxQueryCount * 2 + 1);
+	// gap = $(window).height() / (maxQueryCount * 2 + 1);
+	gap = $(window).height() / (maxQueryCount * 2 + 3);
 	fontSize = gap * 0.6;
     $('body').css('font-size', fontSize);
 };
