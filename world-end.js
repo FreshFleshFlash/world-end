@@ -8,7 +8,7 @@ var browser = "";
 var browserType = "";
 
 var nightHour = 18;
-var dayHour = -6;
+var dayHour = 6;
 
 var fontSize;
 var gap;
@@ -28,8 +28,7 @@ var mastWidth, sailWidth;
 
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
-var smokeX, smokeY, smokeR;
-var smokeColor;
+var smokeX, smokeY, smokeR, smokeColor;
 
 $(window).on('beforeunload', function(){
 	$(document).scrollLeft(0);
@@ -112,9 +111,9 @@ $(document).ready(function() {
 		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
 
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
+		smokeR = chimneyWidth * 0.2;
 		smokeX = canvas.width - chimneyWidth;
-		smokeY = canvas.height - chimneyHeight - 10;
-		smokeR = chimneyWidth / 5;
+		smokeY = canvas.height - chimneyHeight - smokeR;
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {
@@ -146,8 +145,7 @@ function dayOrNight() {
 		$('.modal-content').css('background-color', 'white');
 		$('.modal-content').css('color', 'black');	
 	} else {
-		smokeColor = 'black';
-
+		smokeColor: 'black';
 		$('body').css('background-color', 'white');
 		$('body').css('color', 'black');	
 		$('.modal-content').css('background-color', 'white');
@@ -170,7 +168,7 @@ function displayTweets(tweets, first) {
 
 	var lines = [];
 	for(var i = 0; i < maxQueryCount; i++) {
-		lines[i] = gap + i * gap*2;
+		lines[i] = gap + i * gap * 2;
 	}
 
 	var startingTime = new Date(parseDate(tweets[0].created_at)).getTime();
@@ -282,7 +280,7 @@ function parseDate(strDate) {
 
 function resizeSpace() {
 	gap = $(window).height() / (maxQueryCount * 2 + 1);
-	fontSize = gap * 0.7;
+	fontSize = gap * 0.6;
     $('body').css('font-size', fontSize);
 };
 
@@ -437,7 +435,7 @@ function Particle(x, y) {
 	this.x = x; 
 	this.y = y;
 	this.toX = -3;
-	this.toY = -1.7;
+	this.toY = -2;
 	this.radius = smokeR;
 	this.alpha = 1;
 }
