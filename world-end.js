@@ -7,7 +7,7 @@ var os = "";
 var browser = "";
 var browserType = "";
 
-var nightHour = 18;
+var nightHour = 28;
 var dayHour = 6;
 
 var fontSize;
@@ -28,6 +28,7 @@ var mastWidth, sailWidth;
 
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
+var generatingInterval;
 var smokeX, smokeY, smokeR, smokeColor;
 
 $(window).on('beforeunload', function(){
@@ -77,6 +78,7 @@ $(document).ready(function() {
 
 	initTweets();
 	autoScroll();
+	getTrainSpeed();
 
 	$(window).scroll(function() {
 		getThumbInfo();		
@@ -92,6 +94,7 @@ $(document).ready(function() {
 		}
 
 		chimneyWidth = thumbWidth * 0.05;
+		if(chimneyWidth > $(window).width() * 0.02) chimneyWidth = $(window).width() * 0.02;
 		chimneyHeight = chimneyWidth * 1.5;
 		mastWidth = thumbWidth * 0.03;
 		sailWidth = thumbWidth * 0.35;
@@ -108,7 +111,7 @@ $(document).ready(function() {
 		$('#chimney').css('width', chimneyWidth);
 		$('#chimney').css('height', chimneyHeight);
 		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
-
+	
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
 		smokeR = chimneyWidth * 0.2;
 		smokeX = canvas.width - chimneyWidth;
@@ -123,6 +126,18 @@ $(document).ready(function() {
 		}
 	});
 });
+
+var speed;
+var prePos = 0;
+var currentPos;
+function getTrainSpeed() {
+	setInterval(function() {
+		currentPos = thumbLeft;
+		speed = Math.abs(currentPos - prePos);
+		if(speed < 1) speed = 1;
+		prePos = currentPos;
+	}, 10);
+}
 
 function autoScroll() {	
 	setInterval(function() {
@@ -229,8 +244,6 @@ function getThumbInfo() {
 	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
 	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
 }
-
-
 
 function initTweets() {
 	callAPI(true);
