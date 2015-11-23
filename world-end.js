@@ -7,7 +7,7 @@ var os = "";
 var browser = "";
 var browserType = "";
 
-var nightHour = 28;
+var nightHour = 18;
 var dayHour = 6;
 
 var fontSize;
@@ -28,7 +28,6 @@ var mastWidth, sailWidth;
 
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
-var generatingInterval;
 var smokeX, smokeY, smokeR, smokeColor;
 
 $(window).on('beforeunload', function(){
@@ -80,7 +79,7 @@ $(document).ready(function() {
 
 	initTweets();
 	autoScroll();
-	getTrainSpeed();
+	// getTrainSpeed();
 
 	$(window).scroll(function() {
 		getThumbInfo();		
@@ -90,7 +89,7 @@ $(document).ready(function() {
 			$('#chimney').addClass('show');
 
 			chimneyWidth = thumbWidth * 0.05;
-			if(chimneyWidth > $(window).width() * 0.02) chimneyWidth = $(window).width() * 0.02;
+			if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
 			chimneyHeight = chimneyWidth * 1.5;
 			if(chimneyHeight > $(window).height() * 0.03) chimneyHeight = $(window).height() * 0.03;
 
@@ -456,7 +455,7 @@ function generateParticle(x, y) {
 function Particle(x, y) {
 	this.x = x; 
 	this.y = y;
-	this.toX = Math.random() * (-5) - 1;//-3;
+	this.toX = Math.random() * (-5) - 1;
 	this.toY = -2;
 	this.radius = smokeR;
 	this.toRadius = Math.random() * 0.3 + 0.1;
