@@ -59,6 +59,7 @@ $(document).ready(function() {
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
 		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- If you prefer to take a boat, please use INTERNET EXPLORER</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
+	
 	} else if(browserType == "ms") {
 		bgSound = new Audio('asset/boat.mp3');
 		bgSound.volume = 0.6;
@@ -69,6 +70,7 @@ $(document).ready(function() {
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
 		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- If you prefer to take a train, please use CHROME, OPERA or SAFARI</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
+	
 	} else {
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / OPERA / SAFARI</h4>");
@@ -86,36 +88,41 @@ $(document).ready(function() {
 		if(browserType == "webkit") {
 			$('#chimney').removeClass('hide');
 			$('#chimney').addClass('show');
+
+			chimneyWidth = thumbWidth * 0.05;
+			if(chimneyWidth > $(window).width() * 0.02) chimneyWidth = $(window).width() * 0.02;
+			chimneyHeight = chimneyWidth * 1.5;
+			if(chimneyHeight > $(window).height() * 0.03) chimneyHeight = $(window).height() * 0.03;
+
+			$('#chimney').css('width', chimneyWidth);
+			$('#chimney').css('height', chimneyHeight);
+			$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
+			$('#chimney').css('bottom', chimneyHeight * 0.4);	//*****
+		
+			$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
+			$('#smokeCanvas').css('bottom', chimneyHeight * 0.4);	// *****
+			smokeR = chimneyWidth * 0.2;
+			smokeX = canvas.width - chimneyWidth - 2.5;
+			smokeY = canvas.height - chimneyHeight - smokeR * 2.5;
+		
 		} else if(browserType == "ms") {
 			$('#mast').removeClass('hide');
 			$('#mast').addClass('show');
 			$('.sail').removeClass('hide');
 			$('.sail').addClass('show');
+
+			mastWidth = thumbWidth * 0.03;
+			sailWidth = thumbWidth * 0.35;
+
+			$('#mast').css('width', mastWidth);
+			$('#mast').css('left', thumbLeft + thumbWidth * 0.5 - mastWidth * 0.5);
+
+			$('.sail').css('top', $('#mast').offset().top);
+			$('#leftSail').css('border-left', sailWidth + "px solid transparent");
+			$('#leftSail').css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1.5);
+			$('#rightSail').css('border-right', sailWidth + "px solid transparent");
+			$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1.5);
 		}
-
-		chimneyWidth = thumbWidth * 0.05;
-		if(chimneyWidth > $(window).width() * 0.02) chimneyWidth = $(window).width() * 0.02;
-		chimneyHeight = chimneyWidth * 1.5;
-		mastWidth = thumbWidth * 0.03;
-		sailWidth = thumbWidth * 0.35;
-
-		$('#mast').css('width', mastWidth);
-		$('#mast').css('left', thumbLeft + thumbWidth * 0.5 - mastWidth * 0.5);
-
-		$('.sail').css('top', $('#mast').offset().top);
-		$('#leftSail').css('border-left', sailWidth + "px solid transparent");
-		$('#leftSail').css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1.5);
-		$('#rightSail').css('border-right', sailWidth + "px solid transparent");
-		$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1.5);
-
-		$('#chimney').css('width', chimneyWidth);
-		$('#chimney').css('height', chimneyHeight);
-		$('#chimney').css('left', thumbLeft + thumbWidth - chimneyWidth - 5);
-	
-		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
-		smokeR = chimneyWidth * 0.2;
-		smokeX = canvas.width - chimneyWidth;
-		smokeY = canvas.height - chimneyHeight - smokeR * 2;
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {

@@ -61,7 +61,6 @@ div.tweet {
 
 #smokeCanvas {
     position: fixed;
-    bottom: 1%;
     z-index: 1;
 }
 
@@ -70,8 +69,6 @@ div.tweet {
     background-color: #C1C1C1;
     border: 0px solid transparent;
     border-radius: 5px;
-    bottom: 1%; 
-    max-height: 3%;
     z-index: 3;
 }
 
