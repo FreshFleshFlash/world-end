@@ -79,7 +79,7 @@ $(document).ready(function() {
 	autoScroll();
 
 	$(window).scroll(function() {
-		getThumbInfo();
+		getThumbInfo();		
 	
 		if(browserType == "webkit") {
 			$('#chimney').removeClass('hide');
@@ -97,14 +97,13 @@ $(document).ready(function() {
 		sailWidth = thumbWidth * 0.35;
 
 		$('#mast').css('width', mastWidth);
-		$('#mast').css('left', thumbLeft + thumbWidth / 2 - mastWidth / 2);
+		$('#mast').css('left', thumbLeft + thumbWidth * 0.5 - mastWidth * 0.5);
 
 		$('.sail').css('top', $('#mast').offset().top);
 		$('#leftSail').css('border-left', sailWidth + "px solid transparent");
-		$('#leftSail').css('left', thumbLeft + thumbWidth / 2 - sailWidth - mastWidth * 1.5);
-
+		$('#leftSail').css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1.5);
 		$('#rightSail').css('border-right', sailWidth + "px solid transparent");
-		$('#rightSail').css('left', thumbLeft + thumbWidth / 2 + mastWidth * 1.5);
+		$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1.5);
 
 		$('#chimney').css('width', chimneyWidth);
 		$('#chimney').css('height', chimneyHeight);
@@ -113,7 +112,7 @@ $(document).ready(function() {
 		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
 		smokeR = chimneyWidth * 0.2;
 		smokeX = canvas.width - chimneyWidth;
-		smokeY = canvas.height - chimneyHeight - smokeR;
+		smokeY = canvas.height - chimneyHeight - smokeR * 2;
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
 			if(!loading) {
@@ -178,12 +177,12 @@ function displayTweets(tweets, first) {
 		var id = tweets[i].id_str;
 
 		var user = tweets[i].user.screen_name;
-		user = '<a href = "http://twitter.com/' + user + '"target="_blank" onclick="stopTrain()">' + user + '</a>';
+		user = '<a href = "http://twitter.com/' + user + '"target="_blank" onclick="stopTrain()"><b>' + user + '</b></a>';
 		
 		var text = tweets[i].text;
-		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()">$1</a>');			
-		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()">#$1</a>');				
-		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()">@$1</a>');
+		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()"><b>$1</b></a>');			
+		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()"><b>#$1</b></a>');				
+		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()"><b>@$1</b></a>');
 
 		var time = new Date(parseDate(tweets[i].created_at));
 		time = time.toString();
@@ -230,6 +229,8 @@ function getThumbInfo() {
 	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
 	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
 }
+
+
 
 function initTweets() {
 	callAPI(true);
@@ -426,7 +427,7 @@ function renderSmoke(canvas, context) {
 }
 
 function generateParticle(x, y) {
-	if(new Date().getTime() > lastGeneratingTime + 500) {
+	if(new Date().getTime() > lastGeneratingTime + 200) {
 		lastGeneratingTime = new Date().getTime();
 		particles.push(new Particle(smokeX, smokeY));
 	}
@@ -435,16 +436,17 @@ function generateParticle(x, y) {
 function Particle(x, y) {
 	this.x = x; 
 	this.y = y;
-	this.toX = -3;
+	this.toX = Math.random() * (-5) - 1;//-3;
 	this.toY = -2;
 	this.radius = smokeR;
+	this.toRadius = Math.random() * 0.3 + 0.1;
 	this.alpha = 1;
 }
 
 Particle.prototype.animateParticle = function() {
 	this.x += this.toX;
 	this.y += this.toY;
-	this.radius += 0.2;
+	this.radius += this.toRadius;
 	this.alpha -= 0.005;
 }
 

@@ -54,7 +54,7 @@ div.tweet {
     display: inline-block;
     position: absolute;
     white-space: nowrap;
-    z-index: 3;
+    z-index: 2;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: lighter;
 }
@@ -62,7 +62,7 @@ div.tweet {
 #smokeCanvas {
     position: fixed;
     bottom: 1%;
-    z-index: 2;
+    z-index: 1;
 }
 
 #chimney {
@@ -72,7 +72,7 @@ div.tweet {
     border-radius: 5px;
     bottom: 1%; 
     max-height: 3%;
-    z-index: 2;
+    z-index: 3;
 }
 
 #chimney.night {
@@ -85,7 +85,7 @@ div.tweet {
     width: 10px;
     height: 200px;
     background-color: #CDCDCD;
-    z-index: 2;
+    z-index: 3;
 }
 
 div.sail {
@@ -94,7 +94,7 @@ div.sail {
     height: 0;
     z-index: 2;
     border-bottom: 190px solid #CDCDCD;
-    z-index: 2;
+    z-index: 3;
 }
 
 .hide {
