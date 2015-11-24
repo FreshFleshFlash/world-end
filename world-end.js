@@ -1,7 +1,8 @@
 /*15-10-13 Kwon Daye*/
 var bgSound;
 
-var trainSpeed = 1;
+var autoTrainSpeed = 1;
+var trainSpeed;
 
 var os = "";
 var browser = "";
@@ -79,7 +80,7 @@ $(document).ready(function() {
 
 	initTweets();
 	autoScroll();
-	// getTrainSpeed();
+	getTrainSpeed();
 
 	$(window).scroll(function() {
 		getThumbInfo();		
@@ -118,9 +119,9 @@ $(document).ready(function() {
 
 			$('.sail').css('top', $('#mast').offset().top);
 			$('#leftSail').css('border-left', sailWidth + "px solid transparent");
-			$('#leftSail').css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1.5);
+			$('#leftSail').css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1);
 			$('#rightSail').css('border-right', sailWidth + "px solid transparent");
-			$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1.5);
+			$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1);
 		}
 
 		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
@@ -133,22 +134,10 @@ $(document).ready(function() {
 	});
 });
 
-var speed;
-var prePos = 0;
-var currentPos;
-function getTrainSpeed() {
-	setInterval(function() {
-		currentPos = thumbLeft;
-		speed = Math.abs(currentPos - prePos);
-		if(speed < 1) speed = 1;
-		prePos = currentPos;
-	}, 10);
-}
-
 function autoScroll() {	
 	setInterval(function() {
 		var preScroll = $(document).scrollLeft();
-		$(document).scrollLeft(preScroll + trainSpeed);
+		$(document).scrollLeft(preScroll + autoTrainSpeed);
 	}, 10);
 }
 
@@ -251,6 +240,17 @@ function getThumbInfo() {
 	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
 }
 
+var prePos = 0;
+var currentPos;
+function getTrainSpeed() {
+	setInterval(function() {
+		currentPos = thumbLeft;
+		trainSpeed = Math.abs(currentPos - prePos);
+		if(trainSpeed < 1) trainSpeed = 1;
+		prePos = currentPos;
+	}, 10);
+}
+
 function initTweets() {
 	callAPI(true);
 }
@@ -306,7 +306,7 @@ function resizeSpace() {
 };
 
 function stopTrain() {
-	//trainSpeed = 0;
+	//autoTrainSpeed = 0;
 }
 
 function timeFormat(time) {
@@ -446,7 +446,7 @@ function renderSmoke(canvas, context) {
 }
 
 function generateParticle(x, y) {
-	if(new Date().getTime() > lastGeneratingTime + 200) {
+	if(new Date().getTime() > lastGeneratingTime + 200 / Math.sqrt(trainSpeed)) {
 		lastGeneratingTime = new Date().getTime();
 		particles.push(new Particle(smokeX, smokeY));
 	}
