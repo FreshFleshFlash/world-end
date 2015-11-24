@@ -193,7 +193,9 @@ function displayTweets(tweets, first) {
 		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()"><b>$1</b></a>');			
 		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()"><b>#$1</b></a>');				
 		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()"><b>@$1</b></a>');
-
+	
+		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
+		
 		var time = new Date(parseDate(tweets[i].created_at));
 		time = time.toString();
 		time = time.split("(")[0];
