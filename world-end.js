@@ -165,8 +165,8 @@ function dayOrNight() {
 function detectBrowser() {
 	var info = navigator.userAgent.toLowerCase();
 
-	if(info.indexOf("chrome") >= 0 || info.indexOf("safari") >= 0) browserType = "webkit";
-	else if(info.indexOf("trident") >= 0) browserType = "ms";
+	if(info.indexOf("chrome") > -1 || info.indexOf("safari") > -1) browserType = "webkit";
+	else if(info.indexOf("trident") > -1) browserType = "ms";
 	else browserType = "others";
 
 	console.log(info + "\n" + browserType);
@@ -188,7 +188,7 @@ function displayTweets(tweets, first) {
 
 		var user = tweets[i].user.screen_name;
 		user = '<a href = "http://twitter.com/' + user + '"target="_blank" onclick="stopTrain()"><b>' + user + '</b></a>';
-		
+
 		var text = tweets[i].text;
 		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()"><b>$1</b></a>');			
 		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()"><b>#$1</b></a>');				
@@ -242,6 +242,7 @@ function getThumbInfo() {
 
 var prePos = 0;
 var currentPos;
+
 function getTrainSpeed() {
 	setInterval(function() {
 		currentPos = thumbLeft;
@@ -269,6 +270,7 @@ function loadTweets() {
 
 var callCount = 0;
 var tweets = [];
+var tempTweets = [];
 
 function callAPI(first) {
 	console.log("callAPI " + callCount++);
@@ -278,12 +280,27 @@ function callAPI(first) {
 	twitterAPI('search/tweets', {q: keyword, count: maxQueryCount, since_id: sinceId}, function(result) {
 		lastQueryTime = new Date().getTime();
 
-		if(result.statuses.length == 0) {
+		tempTweets = result.statuses;
+
+		var idx = 0;
+		var userName = "";
+		while(idx < tempTweets.length) {
+			userName = tempTweets[idx].user.screen_name;
+
+			if(((userName.toLowerCase().indexOf("world") > -1) && (userName.toLowerCase().indexOf("end") > -1)) || (tempTweets[idx].text.indexOf("@_THE_WORLD_END_") > -1)) {
+				// console.log(userName, tempTweets[idx].text);
+				tempTweets.splice(idx, 1);
+			} else {
+				idx++;
+			} 
+		}
+
+		if(tempTweets.length == 0) {
 			setTimeout(function() {
 				callAPI(first);
 			}, 5000);
 		} else {
-			tweets = result.statuses.reverse();
+			tweets = tempTweets.reverse();
 			displayTweets(tweets, first);
 		}
 	});
@@ -332,6 +349,10 @@ function Tweet(id, text, left, top) {
 	this.html = function() {
 		return '<div id="'+this.id+'" class="tweet" style="top:'+this.top+'px; left:'+this.left+'px">'+this.text+'</div>';
 	};
+
+
+	this.textFlag = false;
+	this.userFlag = false;
 }
 
 var myTwitterConfig = {	
