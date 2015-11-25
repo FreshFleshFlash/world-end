@@ -196,8 +196,7 @@ function displayTweets(tweets, first) {
 	
 		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
 		
-		var time = new Date(parseDate(tweets[i].created_at));
-		time = time.toString();
+		var time = new Date(parseDate(tweets[i].created_at)) time = time.toString();
 		time = time.split("(")[0];
 
 		text = time+ " " + user + " " + text;
@@ -351,10 +350,6 @@ function Tweet(id, text, left, top) {
 	this.html = function() {
 		return '<div id="'+this.id+'" class="tweet" style="top:'+this.top+'px; left:'+this.left+'px">'+this.text+'</div>';
 	};
-
-
-	this.textFlag = false;
-	this.userFlag = false;
 }
 
 var myTwitterConfig = {	
