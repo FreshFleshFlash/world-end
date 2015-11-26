@@ -196,7 +196,8 @@ function displayTweets(tweets, first) {
 	
 		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
 		
-		var time = new Date(parseDate(tweets[i].created_at)) time = time.toString();
+		var time = new Date(parseDate(tweets[i].created_at));
+		time = time.toString();
 		time = time.split("(")[0];
 
 		text = time+ " " + user + " " + text;
@@ -473,7 +474,7 @@ function generateParticle(x, y) {
 function Particle(x, y) {
 	this.x = x; 
 	this.y = y;
-	this.toX = Math.random() * (-5) - 1;
+	this.toX = Math.random() * (-8) - 1;
 	this.toY = -2;
 	this.radius = smokeR;
 	this.toRadius = Math.random() * 0.3 + 0.1;
