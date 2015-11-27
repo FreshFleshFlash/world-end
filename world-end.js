@@ -57,7 +57,7 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot<br/><br/>- If you prefer to take a boat, please use INTERNET EXPLORER</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	
 	} else if(browserType == "ms") {
@@ -68,7 +68,7 @@ $(document).ready(function() {
 		
 		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?<br/><br/>- If you prefer to take a train, please use CHROME, OPERA or SAFARI</p>");
+		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?</p>");
 		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	
 	} else {
@@ -82,8 +82,8 @@ $(document).ready(function() {
 	autoScroll();
 	getTrainSpeed();
 
-	$(window).scroll(function() {
-		getThumbInfo();		
+    $(window).scroll(function() {
+		getThumbInfo();
 	
 		if(browserType == "webkit") {
 			$('#chimney').removeClass('hide');
@@ -215,7 +215,7 @@ function displayTweets(tweets, first) {
 	}
 
 	if(!($(document).width() > $(window).width())) {
-		console.log("append");
+		console.log("append blank");
 		$('body').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
 	}
 
@@ -224,6 +224,7 @@ function displayTweets(tweets, first) {
 	} else {
 		stopSpinner();
 		bgSound.play();
+
 	}
 
 	loading = false;
@@ -290,7 +291,7 @@ function callAPI(first) {
 			userName = tempTweets[idx].user.screen_name;
 
 			if(((userName.toLowerCase().indexOf("world") > -1) && (userName.toLowerCase().indexOf("end") > -1)) || (tempTweets[idx].text.indexOf("@_THE_WORLD_END_") > -1)) {
-				// console.log(userName, tempTweets[idx].text);
+                console.log(userName, tempTweets[idx].text);
 				tempTweets.splice(idx, 1);
 			} else {
 				idx++;
@@ -320,7 +321,7 @@ function parseDate(strDate) {
 function resizeSpace() {
 	// gap = $(window).height() / (maxQueryCount * 2 + 1);
 	gap = $(window).height() / (maxQueryCount * 2 + 3);
-	fontSize = gap * 0.6;
+	fontSize = gap * 0.55;
     $('body').css('font-size', fontSize);
 };
 
@@ -405,9 +406,9 @@ var optsColor = (new Date().getHours() >= nightHour || new Date().getHours() < d
 
 var opts = {
 	lines: 20, // The number of lines to draw
-	length: 40, // The length of each line
+	length: 40,//40, // The length of each line
 	width: 10, // The line thickness
-	radius: 50, // The radius of the inner circle
+	radius: 70,//50, // The radius of the inner circle
 	corners: 3, // Corner roundness (0..1)
 	rotate: 0, // The rotation offset
 	direction: 1, // 1: clockwise, -1: counterclockwise
@@ -427,10 +428,13 @@ var spinner = new Spinner(opts);
 
 function startSpinner() {
 	spinner.spin($('body')[0]);
+    $('#question').css('display', 'block');
 }
 
 function stopSpinner() {
 	spinner.stop();
+    $('#question').css('display', 'none');
+
 }
 
 function renderSmoke(canvas, context) {
@@ -477,7 +481,7 @@ function Particle(x, y) {
 	this.toX = Math.random() * (-8) - 1;
 	this.toY = -2;
 	this.radius = smokeR;
-	this.toRadius = Math.random() * 0.3 + 0.1;
+	this.toRadius = Math.random() * 0.4 + 0.1;
 	this.alpha = 1;
 }
 

@@ -54,6 +54,7 @@ div.tweet {
     display: inline-block;
     position: absolute;
     white-space: nowrap;
+    margin: 0;
     z-index: 2;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: lighter;
@@ -104,4 +105,21 @@ div.sail {
 
 .blank {
     position: absolute;
+}
+
+#question {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    z-index: 99;
+    display: none;
+    /*border: solid black;*/
+    margin-top: -100px;
+    margin-left: -100px;
+    font-size: 15px;
+    font-family: Helvetica, Arial, sans-serif;
 }
