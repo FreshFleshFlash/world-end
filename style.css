@@ -56,8 +56,9 @@ div.tweet {
     white-space: nowrap;
     margin: 0;
     z-index: 2;
+    font-style: normal;
     font-family: Helvetica, Arial, sans-serif;
-    font-weight: lighter;
+    font-weight: normal;  
 }
 
 #smokeCanvas {
@@ -109,17 +110,13 @@ div.sail {
 
 #question {
     position: fixed;
-    width: 200px;
-    height: 200px;
-    line-height: 200px;
     text-align: center;
     left: 50%;
     top: 50%;
     z-index: 99;
     display: none;
-    /*border: solid black;*/
-    margin-top: -100px;
-    margin-left: -100px;
-    font-size: 15px;
+/*    border: solid white;*/
     font-family: Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    font-style: normal;
 }

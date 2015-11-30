@@ -10,6 +10,7 @@ var browserType = "";
 
 var nightHour = 18;
 var dayHour = 6;
+var isNight;
 
 var fontSize;
 var gap;
@@ -124,9 +125,9 @@ $(document).ready(function() {
 			$('#rightSail').css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1);
 		}
 
-		if($(document).scrollLeft()+ $(window).width() >= $(document).width()) {
+		if($(document).scrollLeft() + $(window).width() >= $(document).width()) {
 			if(!loading) {
-				loadTweets();
+				loadTweets();				
 				startSpinner();
 				bgSound.pause();
 			}
@@ -142,24 +143,51 @@ function autoScroll() {
 }
 
 function dayOrNight() {
-	var isNight = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour) ? true : false;	
+	isNight = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour) ? true : false;
+	// isNight = (new Date().getSeconds() % 10 < 5) ? true : false;		
+	var preIsNight = isNight;
 
 	if(isNight) {
 		$('body').addClass('night');
 		$('#chimney').addClass('night');
+		
 		smokeColor = 'white';
-
 		$('body').css('background-color', 'black');
 		$('body').css('color', 'white');
 		$('.modal-content').css('background-color', 'white');
 		$('.modal-content').css('color', 'black');	
 	} else {
-		smokeColor: 'black';
+		smokeColor = 'black';
 		$('body').css('background-color', 'white');
 		$('body').css('color', 'black');	
 		$('.modal-content').css('background-color', 'white');
 		$('.modal-content').css('color', 'black');	
 	}
+
+	setInterval(function() {
+		isNight = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour) ? true : false;
+		// isNight = (new Date().getSeconds() % 10 < 5) ? true : false;
+		if(preIsNight == isNight) return;
+
+		preIsNight = isNight;
+		
+		if(isNight) {
+			$('body').addClass('night');
+			$('#chimney').addClass('night');
+			
+			smokeColor = 'white';
+			$('body').css('background-color', 'black');
+			$('body').css('color', 'white');
+			$('.modal-content').css('background-color', 'white');
+			$('.modal-content').css('color', 'black');	
+		} else {
+			smokeColor = 'black';
+			$('body').css('background-color', 'white');
+			$('body').css('color', 'black');	
+			$('.modal-content').css('background-color', 'white');
+			$('.modal-content').css('color', 'black');	
+		}
+	}, 1000);
 }
 
 function detectBrowser() {
@@ -291,7 +319,7 @@ function callAPI(first) {
 			userName = tempTweets[idx].user.screen_name;
 
 			if(((userName.toLowerCase().indexOf("world") > -1) && (userName.toLowerCase().indexOf("end") > -1)) || (tempTweets[idx].text.indexOf("@_THE_WORLD_END_") > -1)) {
-                console.log(userName, tempTweets[idx].text);
+                // console.log(userName, tempTweets[idx].text);
 				tempTweets.splice(idx, 1);
 			} else {
 				idx++;
@@ -322,7 +350,57 @@ function resizeSpace() {
 	// gap = $(window).height() / (maxQueryCount * 2 + 1);
 	gap = $(window).height() / (maxQueryCount * 2 + 3);
 	fontSize = gap * 0.55;
-    $('body').css('font-size', fontSize);
+    $('body').css('font-size', fontSize + "px");
+
+    var question = "This is the end?";
+	var questionDivSize = question.length * fontSize * 0.8;
+    $('#question').css('width', questionDivSize + "px");
+    $('#question').css('height', questionDivSize + "px");
+    $('#question').css('line-height', questionDivSize + "px");
+    $('#question').css('margin-top', -questionDivSize * 0.5 + "px");
+    $('#question').css('margin-left', -questionDivSize * 0.5 + "px");
+    
+    var spinnerSize = questionDivSize * 0.45;
+
+    dayOpts = {
+		lines: 20, // The number of lines to draw
+		length: spinnerSize * 0.6,//40, // The length of each line
+		width: 12, // The line thickness
+		radius: spinnerSize,//50, // The radius of the inner circle
+		corners: 3, // Corner roundness (0..1)
+		rotate: 0, // The rotation offset
+		direction: 1, // 1: clockwise, -1: counterclockwise
+		color: 'black', 
+		speed: 1, // Rounds per second
+		trail: 60, // Afterglow percentage
+		shadow: false, // Whether to render a shadow
+		hwaccel: false, // Whether to use hardware acceleration
+		className: 'spinner', // The CSS class to assign to the spinner
+		zIndex: 2e9, // The z-index (defaults to 2000000000)
+		top: '50%', // Top position relative to parent in px
+		left: '50%', // Left position relative to parent in px
+		position: 'fixed' // Element positioning
+	};
+
+	nightOpts = {
+		lines: 20, // The number of lines to draw
+		length: spinnerSize * 0.6,//40, // The length of each line
+		width: 12, // The line thickness
+		radius: spinnerSize,//50, // The radius of the inner circle
+		corners: 3, // Corner roundness (0..1)
+		rotate: 0, // The rotation offset
+		direction: 1, // 1: clockwise, -1: counterclockwise
+		color: 'white', 
+		speed: 1, // Rounds per second
+		trail: 60, // Afterglow percentage
+		shadow: false, // Whether to render a shadow
+		hwaccel: false, // Whether to use hardware acceleration
+		className: 'spinner', // The CSS class to assign to the spinner
+		zIndex: 2e9, // The z-index (defaults to 2000000000)
+		top: '50%', // Top position relative to parent in px
+		left: '50%', // Left position relative to parent in px
+		position: 'fixed' // Element positioning
+	};
 };
 
 function stopTrain() {
@@ -402,39 +480,80 @@ function twitterAPI(api, params, callback) {
 	}).fail(function(xhr) {});
 }
 
-var optsColor = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour)? 'white' : 'black';
+// var optsColor = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour)? 'white' : 'black';
 
-var opts = {
-	lines: 20, // The number of lines to draw
-	length: 40,//40, // The length of each line
-	width: 10, // The line thickness
-	radius: 70,//50, // The radius of the inner circle
-	corners: 3, // Corner roundness (0..1)
-	rotate: 0, // The rotation offset
-	direction: 1, // 1: clockwise, -1: counterclockwise
-	color: optsColor, 
-	speed: 1, // Rounds per second
-	trail: 60, // Afterglow percentage
-	shadow: false, // Whether to render a shadow
-	hwaccel: false, // Whether to use hardware acceleration
-	className: 'spinner', // The CSS class to assign to the spinner
-	zIndex: 2e9, // The z-index (defaults to 2000000000)
-	top: '50%', // Top position relative to parent in px
-	left: '50%', // Left position relative to parent in px
-	position: 'fixed' // Element positioning
-};
+// var dayOpts = {
+// 	lines: 20, // The number of lines to draw
+// 	length: 40,//40, // The length of each line
+// 	width: 10, // The line thickness
+// 	radius: questionDivSize,//50, // The radius of the inner circle
+// 	corners: 3, // Corner roundness (0..1)
+// 	rotate: 0, // The rotation offset
+// 	direction: 1, // 1: clockwise, -1: counterclockwise
+// 	color: 'black', 
+// 	speed: 1, // Rounds per second
+// 	trail: 60, // Afterglow percentage
+// 	shadow: false, // Whether to render a shadow
+// 	hwaccel: false, // Whether to use hardware acceleration
+// 	className: 'spinner', // The CSS class to assign to the spinner
+// 	zIndex: 2e9, // The z-index (defaults to 2000000000)
+// 	top: '50%', // Top position relative to parent in px
+// 	left: '50%', // Left position relative to parent in px
+// 	position: 'fixed' // Element positioning
+// };
 
-var spinner = new Spinner(opts);
+// var nightOpts = {
+// 	lines: 20, // The number of lines to draw
+// 	length: 40,//40, // The length of each line
+// 	width: 10, // The line thickness
+// 	radius: questionDivSize,//50, // The radius of the inner circle
+// 	corners: 3, // Corner roundness (0..1)
+// 	rotate: 0, // The rotation offset
+// 	direction: 1, // 1: clockwise, -1: counterclockwise
+// 	color: 'white', 
+// 	speed: 1, // Rounds per second
+// 	trail: 60, // Afterglow percentage
+// 	shadow: false, // Whether to render a shadow
+// 	hwaccel: false, // Whether to use hardware acceleration
+// 	className: 'spinner', // The CSS class to assign to the spinner
+// 	zIndex: 2e9, // The z-index (defaults to 2000000000)
+// 	top: '50%', // Top position relative to parent in px
+// 	left: '50%', // Left position relative to parent in px
+// 	position: 'fixed' // Element positioning
+// };
+
+var spinner;
+var opts, dayOpts, nightOpts;
+var spinnerInterval;
 
 function startSpinner() {
+	if(isNight) opts = nightOpts;
+	else opts = dayOpts;
+
+	spinner = new Spinner(opts);
+
 	spinner.spin($('body')[0]);
     $('#question').css('display', 'block');
+
+    var preIsNight = isNight;
+
+	spinnerInterval = setInterval(function() {
+		console.log("interval?");
+		if(preIsNight != isNight) {
+			preIsNight = isNight;
+			spinner.stop();
+
+			opts = (preIsNight) ? nightOpts : dayOpts;
+			spinner = new Spinner(opts);
+			spinner.spin($('body')[0]);
+		}
+	}, 100); 	
 }
 
 function stopSpinner() {
+	clearInterval(spinnerInterval);
 	spinner.stop();
     $('#question').css('display', 'none');
-
 }
 
 function renderSmoke(canvas, context) {
