@@ -221,7 +221,15 @@ function displayTweets(tweets, first) {
 		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()"><b>$1</b></a>');			
 		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()"><b>#$1</b></a>');				
 		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()"><b>@$1</b></a>');
-	
+
+		//text = text.replace(/world/gi, function myFunction(x){
+		//	return '<span id="keyword">' + x + '</span>';
+		//});
+        //
+		//text = text.replace(/end/gi, function myFunction(x){
+		//	return '<span id="keyword">' + x + '</span>';
+		//});
+
 		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
 		
 		var time = new Date(parseDate(tweets[i].created_at));
@@ -319,7 +327,7 @@ function callAPI(first) {
 			userName = tempTweets[idx].user.screen_name;
 
 			if(((userName.toLowerCase().indexOf("world") > -1) && (userName.toLowerCase().indexOf("end") > -1)) || (tempTweets[idx].text.indexOf("@_THE_WORLD_END_") > -1)) {
-                // console.log(userName, tempTweets[idx].text);
+                 console.log(userName, tempTweets[idx].text);
 				tempTweets.splice(idx, 1);
 			} else {
 				idx++;
@@ -479,48 +487,6 @@ function twitterAPI(api, params, callback) {
 		cache: true
 	}).fail(function(xhr) {});
 }
-
-// var optsColor = (new Date().getHours() >= nightHour || new Date().getHours() < dayHour)? 'white' : 'black';
-
-// var dayOpts = {
-// 	lines: 20, // The number of lines to draw
-// 	length: 40,//40, // The length of each line
-// 	width: 10, // The line thickness
-// 	radius: questionDivSize,//50, // The radius of the inner circle
-// 	corners: 3, // Corner roundness (0..1)
-// 	rotate: 0, // The rotation offset
-// 	direction: 1, // 1: clockwise, -1: counterclockwise
-// 	color: 'black', 
-// 	speed: 1, // Rounds per second
-// 	trail: 60, // Afterglow percentage
-// 	shadow: false, // Whether to render a shadow
-// 	hwaccel: false, // Whether to use hardware acceleration
-// 	className: 'spinner', // The CSS class to assign to the spinner
-// 	zIndex: 2e9, // The z-index (defaults to 2000000000)
-// 	top: '50%', // Top position relative to parent in px
-// 	left: '50%', // Left position relative to parent in px
-// 	position: 'fixed' // Element positioning
-// };
-
-// var nightOpts = {
-// 	lines: 20, // The number of lines to draw
-// 	length: 40,//40, // The length of each line
-// 	width: 10, // The line thickness
-// 	radius: questionDivSize,//50, // The radius of the inner circle
-// 	corners: 3, // Corner roundness (0..1)
-// 	rotate: 0, // The rotation offset
-// 	direction: 1, // 1: clockwise, -1: counterclockwise
-// 	color: 'white', 
-// 	speed: 1, // Rounds per second
-// 	trail: 60, // Afterglow percentage
-// 	shadow: false, // Whether to render a shadow
-// 	hwaccel: false, // Whether to use hardware acceleration
-// 	className: 'spinner', // The CSS class to assign to the spinner
-// 	zIndex: 2e9, // The z-index (defaults to 2000000000)
-// 	top: '50%', // Top position relative to parent in px
-// 	left: '50%', // Left position relative to parent in px
-// 	position: 'fixed' // Element positioning
-// };
 
 var spinner;
 var opts, dayOpts, nightOpts;
