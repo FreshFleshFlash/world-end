@@ -115,12 +115,7 @@ div.sail {
     top: 50%;
     z-index: 99;
     display: none;
-/*    border: solid white;*/
     font-family: Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
 }
-
-/*#keyword {*/
-    /*color: yellow;*/
-/*}*/

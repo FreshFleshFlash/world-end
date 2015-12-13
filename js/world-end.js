@@ -51,7 +51,7 @@ $(document).ready(function() {
 		
 		renderSmoke(canvas, context);
 
-		bgSound = new Audio('asset/train.mp3');
+		bgSound = new Audio('data/train.mp3');
 		bgSound.volume = 0.6;
 		bgSound.play();
 		bgSound.loop = true;
@@ -62,7 +62,7 @@ $(document).ready(function() {
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 	
 	} else if(browserType == "ms") {
-		bgSound = new Audio('asset/boat.mp3');
+		bgSound = new Audio('data/boat.mp3');
 		bgSound.volume = 0.6;
 		bgSound.play();
 		bgSound.loop = true;
@@ -191,11 +191,11 @@ function dayOrNight() {
 }
 
 function detectBrowser() {
-	var info = navigator.userAgent.toLowerCase();
+    var info = navigator.userAgent;
 
-	if(info.indexOf("chrome") > -1 || info.indexOf("safari") > -1) browserType = "webkit";
-	else if(info.indexOf("trident") > -1) browserType = "ms";
-	else browserType = "others";
+	if(/(chrome|safari)/i.test(info)) browserType = "webkit";
+    else if(/trident/i.test(info)) browserType = "ms";
+    else browserType = "others";
 
 	console.log(info + "\n" + browserType);
 }
@@ -326,8 +326,8 @@ function callAPI(first) {
 		while(idx < tempTweets.length) {
 			userName = tempTweets[idx].user.screen_name;
 
-			if(((userName.toLowerCase().indexOf("world") > -1) && (userName.toLowerCase().indexOf("end") > -1)) || (tempTweets[idx].text.indexOf("@_THE_WORLD_END_") > -1)) {
-                 console.log(userName, tempTweets[idx].text);
+            if(((/world/i.test(userName)) && (/end/i.test(userName))) || (/@_THE_WORLD_END/.test(tempTweets[idx].text))) {
+                //console.log(userName, tempTweets[idx].text);
 				tempTweets.splice(idx, 1);
 			} else {
 				idx++;
@@ -504,7 +504,7 @@ function startSpinner() {
     var preIsNight = isNight;
 
 	spinnerInterval = setInterval(function() {
-		console.log("interval?");
+		//console.log("interval?");
 		if(preIsNight != isNight) {
 			preIsNight = isNight;
 			spinner.stop();
