@@ -1,13 +1,16 @@
 /*15-10-13 Kwon Daye*/
+/*last modified: 15-12-22*/
 body {
     position: absolute;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    -ms-overflow-style: scrollbar;
+    overflow:hidden;
+}
+
+.modal-content {
+    font-size: 12pt;
 }
 
 #bg {
@@ -20,15 +23,16 @@ body {
     overflow-y: hidden;
 }
 
-#loco {
-    position: fixed;
-    height: 11px;
-    bottom: 2px;
+#bg.ie {
+    -ms-overflow-style: scrollbar;
+    -ms-scrollbar-face-color: #CDCDCD;
+    -ms-scrollbar-highlight-color: #F0F0F0;
+    -ms-scrollbar-arrow-color: #606060;
 }
 
 #bg::-webkit-scrollbar {
     -webkit-appearance: none;
-    height: 16px;
+    height: 17px;
 }
 
 #bg::-webkit-scrollbar-track {
@@ -38,11 +42,11 @@ body {
 }
 
 #bg::-webkit-scrollbar-thumb {
-    /*background-color: #C1C1C1;*/
-    /*border: 3px solid transparent;*/
-    /*border-radius: 10px;*/
-    /*background-clip: content-box;*/
-    /*height: 8px;*/
+    background-color: #C1C1C1;
+    height: 17px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 10px;
 }
 
 #bg::-webkit-scrollbar-thumb:hover {
@@ -57,13 +61,37 @@ body {
     background-color: #393939;
 }
 
-body.modal-open {
-    overflow-x: scroll;
-    overflow-y: hidden;
+#chimney {
+    position: fixed;
+    bottom: 13px;
+    height: 8px;
+    background-color: #C1C1C1;
+    z-index: 2;
 }
 
-.modal-content {
-    font-size: 12pt;
+#chimney.over {
+    background-color: #7D7D7D;
+}
+
+#chimney.night {
+    background-color: #7D7D7D;
+}
+
+#chimney.night.over {
+    background-color: #393939;
+}
+
+#bg.ie > #chimney {
+    background-color: #CDCDCD;
+    bottom: 17px;
+    height: 5px;
+    border: 1px solid #A0A0A0;
+}
+
+#smokeCanvas {
+    position: fixed;
+    bottom: 17px;
+    z-index: 0;
 }
 
 div.tweet {
@@ -71,58 +99,14 @@ div.tweet {
     position: absolute;
     white-space: nowrap;
     margin: 0;
-    z-index: 2;
     font-style: normal;
     font-family: Helvetica, Arial, sans-serif;
-    font-weight: normal;  
+    font-weight: normal;
+    z-index: 1;
 }
 
-#smokeCanvas {
-    position: fixed;
-    z-index: -99;
-    /*display: none;*/
-}
-
-#chimney {
-    position: fixed; 
-    background-color: #C1C1C1;
-    border: 0px solid transparent;
-    border-radius: 5px;
-    z-index: 3;
-}
-
-#chimney.night {
-    background-color: #7D7D7D;
-}
-
-#mast {
-    position: fixed;
-    bottom: 0.5%;
-    width: 10px;
-    height: 200px;
-    background-color: #CDCDCD;
-    z-index: 3;
-}
-
-div.sail {
-    position: fixed;
-    width: 0;
-    height: 0;
-    z-index: 2;
-    border-bottom: 190px solid #CDCDCD;
-    z-index: 3;
-}
-
-.hide {
-    display: none;
-}
-
-.show {
-    display: block;
-}
-
-.blank {
-    position: absolute;
+#bg.night > div.tweet {
+    font-weight: lighter;
 }
 
 #question {
@@ -130,9 +114,17 @@ div.sail {
     text-align: center;
     left: 50%;
     top: 50%;
-    z-index: 99;
     display: none;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
+    z-index: 99;
+}
+
+#bg.night > #question {
+    font-weight: lighter;
+}
+
+.blank {
+    position: absolute;
 }

@@ -1,4 +1,5 @@
 <!-- 15-10-13 Kwon Daye -->
+<!-- last modified: 15-12-22-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,41 +9,47 @@
     <title>THE WORLD</title>
 
     <link type="image/x-icon" rel="shortcut icon" href="data/favicon.ico"/>
-    <link type="text/css" rel="stylesheet" href="css/style.css"/>
     <link type="text/css" rel="stylesheet" href="lib/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
 
-    <script type="text/javascript" src="lib/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="lib/oauth.js"></script>
     <script type="text/javascript" src="lib/sha1.js"></script>
     <script type="text/javascript" src="lib/spin.min.js"></script>
     <script type="text/javascript" src="lib/bootstrap.min.js"></script>
 </head>
 <body>
-    <!--<canvas id="smokeCanvas"></canvas>-->
-    
-    <div id="chimney" class="hide"></div>
+<div id="bg">
+    <div id="chimney" style="display:none;"></div>
+    <canvas id="smokeCanvas"></canvas>
+    <div id="question">This is the end?</div>
+</div>
 
-    <div id="mast" class="hide"></div>
-    <div id="leftSail" class="sail hide"></div>
-    <div id="rightSail" class="sail hide"></div>
-
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header"></div>
-                <div class="modal-body"></div>
-                <div class="modal-footer"></div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4>From&nbsp&nbsp&nbsp&nbsp0</h4>
+                <h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    - 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>
+                    - Night Train Service 18:00 - 5:59<br/>
+                    - Transfer Available on the BLUE spots<br/><br/>
+                    - Press SPACE BAR for AUTOMATIC OPERATION
+                </p>
+            </div>
+            <div class="modal-footer">
+                <p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="question">This is the end?</div>
-
-    <div id="bg">
-        <canvas id="smokeCanvas"></canvas>
-    </div>
-    <img id="loco" src="data/loco6_1.png">
-
-    <script type="text/javascript" src="js/world-end.js"></script>
+<script type="text/javascript" src="js/world-end.js"></script>
 </body>
 </html>

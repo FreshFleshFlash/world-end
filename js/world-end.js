@@ -1,15 +1,11 @@
 /*15-10-13 Kwon Daye*/
-var bgSound;
-
+/*last modified: 15-12-22*/
 var browserType = "";
+var gap;
+
 var nightHour = 18;
 var dayHour = 6;
 var isNight;
-
-var gap;
-
-var thumbLeft = 0;
-var thumbWidth = 0;
 
 var loading = false;
 
@@ -18,28 +14,38 @@ var lastQueryTime;
 
 var aFlag = false;
 var autoTrainInterval;
+var sCount = 0;
 
 var canvas = $('#smokeCanvas')[0];
 var context = canvas.getContext('2d');
-canvas.width = $('body').width();
-canvas.height = $('body').height();
+canvas.width = $(window).width();
+canvas.height = $(window).height() - 17;
 
 var particles = [];
 var lastGeneratingTime = new Date().getTime();
 var smokeX, smokeY, smokeR, smokeColor;
 
-var sCount = 0;
-
 $(window).on('beforeunload', function(){
-	$(document).scrollLeft(0);
+	$('#chimney').css('display', 'none');
+	$('#bg').scrollLeft(0);
 });
 
 $(document).ready(function() {
-	init();
-	beingCalled();
+	$('#myModal').modal();
+
+	var bgSound = new Audio('data/train.mp3');
+	bgSound.volume = 0.6;
+	bgSound.loop = true;
+
+	callAPI(true);
+	dayOrNight();
+	resizeSpace();
+	detectBrowser();
+
+	callAudio(bgSound);
 
 	$('#bg').scroll(function() {
-		moveProps();
+		controlChimney();
 		sCount++;
 
 		if($('#bg').scrollLeft() + $(window).width() >= $('#bg')[0].scrollWidth) {
@@ -50,15 +56,15 @@ $(document).ready(function() {
 		}
 	});
 
-	$(window).keypress(function(event) {
-		var code = event.which || event.keyCode;
+	$(window).keypress(function(e) {
+		var code = e.which || e.keyCode;
 		if(code == 32) {
 			aFlag = !aFlag;
 			if(aFlag) {
 				autoTrainInterval = setInterval(function () {
 					var autoTrainSpeed = 1.7;
-					var preScroll = $(document).scrollLeft();
-					$(document).scrollLeft(preScroll + autoTrainSpeed);
+					var preScroll = $('#bg').scrollLeft();
+					$('#bg').scrollLeft(preScroll + autoTrainSpeed);
 				}, 10);
 			} else {
 				clearInterval(autoTrainInterval)
@@ -69,49 +75,44 @@ $(document).ready(function() {
 
 var preSCount = 0;
 
-function beingCalled() {
+function callAudio(bgSound) {
 	setInterval(function() {
 		if(sCount != preSCount) {
 			bgSound.play();
 			preSCount = sCount;
 		}
-		else bgSound.pause();
+		else {
+			bgSound.pause();
+			bgSound.currentTime = 0;
+		}
 	}, 100);
 }
 
-function moveProps() {
-	getThumbInfo();
+function controlChimney() {
+	var thumbLeft = getThumbInfo()['thumbLeft'];
+	var thumbWidth = getThumbInfo()['thumbWidth'];
 
-	if(browserType == "webkit") {
-		var chimneyWidth = thumbWidth * 0.05;
-		if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
-		var chimneyHeight = chimneyWidth * 1.5;
-		if(chimneyHeight > $(window).height() * 0.03) chimneyHeight = $(window).height() * 0.03;
+	var chimneyWidth = thumbWidth * 0.04;
+	if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
 
-		$('#loco').css('width', thumbWidth + 'px')
-		$('#loco').css('left', thumbLeft + 'px');
+	$('#chimney').css('width', chimneyWidth).css('left', thumbLeft + thumbWidth - 5 - chimneyWidth*1.6);
 
-		$('#chimney').css('width', chimneyWidth)
-				.css('height', chimneyHeight)
-				.css('left', thumbLeft + thumbWidth - chimneyWidth - 5)
-				.css('bottom', chimneyHeight * 0.4);	//*****
-		$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width)
-				.css('bottom', chimneyHeight * 0.4);	// *****
-		smokeR = chimneyWidth * 0.2;
-		smokeX = canvas.width - chimneyWidth - 2.5;
-		smokeY = canvas.height - chimneyHeight - smokeR * 2.5;
-	} else if(browserType == "ms") {
-		var mastWidth = thumbWidth * 0.03;
-		var sailWidth = thumbWidth * 0.35;
+	$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
+	smokeR = chimneyWidth * 0.2;
+	smokeX = canvas.width - chimneyWidth*1.5 - 2.5;
+	smokeY = canvas.height - $('#chimney').height()  - smokeR * 2.5;
 
-		$('#mast').css('width', mastWidth)
-				.css('left', thumbLeft + thumbWidth * 0.5 - mastWidth * 0.5);
-		$('.sail').css('top', $('#mast').offset().top);
-		$('#leftSail').css('border-left', sailWidth + "px solid transparent")
-				.css('left', thumbLeft + thumbWidth * 0.5 - sailWidth - mastWidth * 1);
-		$('#rightSail').css('border-right', sailWidth + "px solid transparent")
-				.css('left', thumbLeft + thumbWidth * 0.5 + mastWidth * 1);
-	}
+	$(window).mousemove(function(e) {
+		if((e.clientY >= $(window).height() - 17) && (e.clientY <= $(window).height()) && (e.clientX >= thumbLeft) && (e.clientX <= thumbLeft + thumbWidth)) {
+			$('#chimney').addClass('over');
+		} else {
+			$('#chimney').removeClass('over');
+		}
+	});
+
+	$(window).mouseleave(function() {
+		$('#chimney').removeClass('over');
+	});
 }
 
 function dayOrNight() {
@@ -120,7 +121,7 @@ function dayOrNight() {
 	var preIsNight = isNight;
 
 	if(isNight) {
-		$('body').addClass('night');
+		$('#bg').addClass('night');
 		$('#chimney').addClass('night');
 
 		smokeColor = 'white';
@@ -140,15 +141,15 @@ function dayOrNight() {
 		preIsNight = isNight;
 
 		if(isNight) {
-			$('body').addClass('night');
+			$('#bg').addClass('night');
 			$('#chimney').addClass('night');
 
 			smokeColor = 'white';
-			$('body').css('background-color', 'black').css('color', 'white');
+			$('#bg').css('background-color', 'black').css('color', 'white');
 			$('.modal-content').css('background-color', 'white').css('color', 'black');
 		} else {
 			smokeColor = 'black';
-			$('body').css('background-color', 'white').css('color', 'black');
+			$('#bg').css('background-color', 'white').css('color', 'black');
 			$('.modal-content').css('background-color', 'white').css('color', 'black');
 		}
 	}, 1000);
@@ -157,42 +158,17 @@ function dayOrNight() {
 function detectBrowser() {
 	var info = navigator.userAgent;
 
-	if(/(chrome|safari)/i.test(info)) {
-		browserType = "webkit";
+	if(/(chrome|safari|trident)/i.test(info)) {
+		if(/(chrome|safari)/i.test(info)) browserType = "webkit";
+		else if(/trident/i.test(info)) browserType = "ms";
 
-		bgSound = new Audio('data/train.mp3');
-		bgSound.volume = 0.6;
-		bgSound.loop = true;
-
-		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
-		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot</p>");
-		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
-
-		//$('#chimney').removeClass('hide').addClass('show');
-
+		$('#chimney').css('display', 'block');
 		renderSmoke();
-	}
-	else if(/trident/i.test(info)) {
-		browserType = "ms";
-		bgSound = new Audio('data/boat.mp3');
-		bgSound.volume = 0.6;
-		bgSound.loop = true;
-
-		$('.modal-header').append("<h4>From&nbsp&nbsp&nbsp&nbsp0</h4>");
-		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTHE END OF THE WORLD</h4>");
-		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Boat Service 18:00 - 5:59<br/>- Why don't you visit some BLUE islands?</p>");
-		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
-
-		$('#mast').removeClass('hide').addClass('show');
-		$('.sail').removeClass('hide').addClass('show');
-	}
-	else {
+	} else {
 		browserType = "others";
-		$('.modal-header').append("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
+		$('.modal-header').html("<h4>From&nbsp&nbsp&nbspFIREFOX</h4>");
 		$('.modal-header').append("<h4>To&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCHROME / IE / OPERA / SAFARI</h4>");
-		$('.modal-body').append("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE, OPERA or SAFARI browser.</p>");
-		$('.modal-footer').append("<p>captain <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
+		$('.modal-body').html("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE, OPERA or SAFARI browser.</p>");
 	}
 
 	console.log(info + "\n" + browserType);
@@ -213,14 +189,14 @@ function displayTweets(tweets, first) {
 		var id = tweets[i].id_str;
 
 		var user = tweets[i].user.screen_name;
-		user = '<a href = "http://twitter.com/' + user + '"target="_blank" onclick="stopTrain()"><b>' + user + '</b></a>';
+		user = '<a href = "http://twitter.com/' + user + '"target="_blank"><b>' + user + '</b></a>';
 
 		var text = tweets[i].text;
-		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank" onclick="stopTrain()"><b>$1</b></a>');
-		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank" onclick="stopTrain()"><b>#$1</b></a>');
-		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank" onclick="stopTrain()"><b>@$1</b></a>');
+		text = text.replace(/(s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&~+$,%#]+)/gi, '<a href="$1" target="_blank"><b>$1</b></a>');
+		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank"><b>#$1</b></a>');
+		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank"><b>@$1</b></a>');
 
-		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
+		if(text[text.length - 1] == "��") text = text.slice(0, text.length - 1);
 
 		var time = new Date(parseDate(tweets[i].created_at));
 		time = time.toString();
@@ -242,7 +218,7 @@ function displayTweets(tweets, first) {
 
 	if(!($('#bg')[0].scrollWidth > $(window).width())) {
 		console.log("append blank");
-		//$('body').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
+		$('#bg').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
 	}
 
 	if(first) {
@@ -251,7 +227,7 @@ function displayTweets(tweets, first) {
 		stopSpinner();
 	}
 
-	moveProps();
+	controlChimney();
 	loading = false;
 }
 
@@ -259,33 +235,32 @@ function getThumbInfo() {
 	var arrowWidth;
 
 	if(browserType == "webkit") arrowWidth = 0;
-	else if(browserType == "ms") arrowWidth = 30;
+	else if(browserType == "ms") {
+		arrowWidth = 30;
+		$('#bg').addClass("ie");
+	}
 	else arrowWidth = 0;
 
 	var scrollbarArea = $(window).width() - arrowWidth * 2;
 
-	//thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
-	//thumbWidth = scrollbarArea * $(window).width() / $(document).width();
-	thumbLeft = math_map($('#bg').scrollLeft(), 0, $('#bg')[0].scrollWidth, arrowWidth, $(window).width() - arrowWidth);
-	thumbWidth = scrollbarArea * $(window).width() / $('#bg')[0].scrollWidth;
+	var thumbInfo = {
+		'thumbLeft': math_map($('#bg').scrollLeft(), 0, $('#bg')[0].scrollWidth, arrowWidth, $(window).width() - arrowWidth),
+		'thumbWidth': scrollbarArea * $(window).width() / $('#bg')[0].scrollWidth
+	};
+
+	return thumbInfo;
 }
 
 var prePos = 0;
 var trainSpeed;
 
 function getTrainSpeed() {
+	var thumbLeft = getThumbInfo()['thumbLeft'];
+
 	var currentPos = thumbLeft;
 	trainSpeed = Math.abs(currentPos - prePos);
-	if(trainSpeed < 1) trainSpeed = 1;
+	if($('#bg').scrollLeft() + $(window).width() >= $('#bg')[0].scrollWidth) trainSpeed = 1;
 	prePos = currentPos;
-}
-
-function init() {
-	callAPI(true);
-
-	dayOrNight();
-	resizeSpace();
-	detectBrowser();
 }
 
 function loadTweets() {
@@ -320,7 +295,7 @@ function callAPI(first) {
 			userName = tempTweets[idx].user.screen_name;
 
 			if(((/world/i.test(userName)) && (/end/i.test(userName))) || (/@_THE_WORLD_END/.test(tempTweets[idx].text))) {
-				console.log(userName, tempTweets[idx].text);
+				//console.log(userName, tempTweets[idx].text);
 				tempTweets.splice(idx, 1);
 			} else {
 				idx++;
@@ -348,7 +323,6 @@ function parseDate(strDate) {
 }
 
 function resizeSpace() {
-	// gap = $(window).height() / (maxQueryCount * 2 + 1);
 	gap = $(window).height() / (maxQueryCount * 2 + 3);
 	var fontSize = gap * 0.55;
 	$('#bg').css('font-size', fontSize + "px");
@@ -404,10 +378,6 @@ function resizeSpace() {
 	};
 }
 
-function stopTrain() {
-	//autoTrainSpeed = 0;
-}
-
 function timeFormat(time) {
 	var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -444,13 +414,13 @@ var myTwitterConfig = {
 function twitterAPI(api, params, callback) {
 	if(!api.match(/\.json$/)) api += '.json';
 
-	// �뚮씪誘명꽣 湲곕낯�명똿
+	// 占쎈슢�よ첋紐낃숲 疫꿸퀡��옙紐낅샒
 	params.oauth_cversion = '1.0';
 	params.oauth_signature_method = 'HMAC-SHA1';
 	params.oauth_consumer_key = myTwitterConfig.consumerKey;
 	params.oauth_token = myTwitterConfig.accessToken;
 
-	// callback�� 吏곸젒 吏��뺥븯吏� �딄퀬 臾닿린紐� �⑥닔濡� 以� 寃쎌슦 �먮룞 �앹꽦�쒕떎.
+	// callback占쏙옙 �뤾낯�� �륅옙占쎈벤釉�릯占� 占쎈봽�� �얜떯由곁킄占� 占썩뫁�붹에占� 餓ο옙 野껋럩�� 占쎈Ŧ猷� 占쎌빘苑�옙�뺣뼄.
 	if (!params.callback && callback) {
 		params.callback = 'ssh'+(Math.random()+'').replace('0.','');
 		window[params.callback] = callback;
@@ -462,14 +432,14 @@ function twitterAPI(api, params, callback) {
 		parameters: params
 	};
 
-	// Oauth �몄쬆愿���
+	// Oauth 占쎈챷弛녷꽴占쏙옙占�
 	OAuth.setTimestampAndNonce(oauthMessage);
 	OAuth.SignatureMethod.sign(oauthMessage, {
 		consumerSecret: myTwitterConfig.consumerSecret,
 		tokenSecret: myTwitterConfig.tokenSecret
 	});
 
-	// Oauth �몄쬆�섏뿬 URL由ы꽩(json type)
+	// Oauth 占쎈챷弛놅옙�뤿연 URL�귐뗪쉘(json type)
 	var jsonUrl = OAuth.addToURL(oauthMessage.action, oauthMessage.parameters);
 
 	$.ajax({
@@ -497,14 +467,13 @@ function startSpinner() {
 	var preIsNight = isNight;
 
 	spinnerInterval = setInterval(function() {
-		//console.log("interval?");
 		if(preIsNight != isNight) {
 			preIsNight = isNight;
 			spinner.stop();
 
 			opts = (preIsNight) ? nightOpts : dayOpts;
 			spinner = new Spinner(opts);
-			spinner.spin($('#bg')[0]);
+			spinner.spin($('body')[0]);
 		}
 	}, 100);
 }
@@ -556,9 +525,9 @@ function Particle(x, y) {
 	this.x = x;
 	this.y = y;
 	this.toX = Math.random() * (-8) - 1;
-	this.toY = -2;
+	this.toY = -2.5;
 	this.radius = smokeR;
-	this.toRadius = Math.random() * 0.4 + 0.1;
+	this.toRadius = Math.random() * 0.6 + 0.1;
 	this.alpha = 1;
 }
 
