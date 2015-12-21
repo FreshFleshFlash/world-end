@@ -5,39 +5,55 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: hidden;
     -ms-overflow-style: scrollbar;
 }
 
-body::-webkit-scrollbar {
+#bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+#loco {
+    position: fixed;
+    height: 11px;
+    bottom: 2px;
+}
+
+#bg::-webkit-scrollbar {
     -webkit-appearance: none;
     height: 16px;
 }
 
-body::-webkit-scrollbar-track { 
-    background-color: #FAFAFA; 
+#bg::-webkit-scrollbar-track {
+    background-color: #FAFAFA;
     border: 1px solid #E8E8E8;
-    border-radius: 0px; 
-} 
-
-body::-webkit-scrollbar-thumb {
-    background-color: #C1C1C1;
-    border: 3px solid transparent; 
-    border-radius: 10px;     
-    background-clip: content-box;
-    height: 8px;
+    border-radius: 0px;
 }
 
-body::-webkit-scrollbar-thumb:hover {
+#bg::-webkit-scrollbar-thumb {
+    /*background-color: #C1C1C1;*/
+    /*border: 3px solid transparent;*/
+    /*border-radius: 10px;*/
+    /*background-clip: content-box;*/
+    /*height: 8px;*/
+}
+
+#bg::-webkit-scrollbar-thumb:hover {
     background-color: #7D7D7D;
 }
 
-body.night::-webkit-scrollbar-thumb {
+#bg.night::-webkit-scrollbar-thumb {
     background-color: #7D7D7D;
 }
 
-body.night::-webkit-scrollbar-thumb:hover {
+#bg.night::-webkit-scrollbar-thumb:hover {
     background-color: #393939;
 }
 
@@ -63,7 +79,8 @@ div.tweet {
 
 #smokeCanvas {
     position: fixed;
-    z-index: 1;
+    z-index: -99;
+    /*display: none;*/
 }
 
 #chimney {

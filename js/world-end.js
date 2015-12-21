@@ -2,7 +2,7 @@
 var bgSound;
 
 var browserType = "";
-var nightHour = 28;
+var nightHour = 18;
 var dayHour = 6;
 var isNight;
 
@@ -38,11 +38,11 @@ $(document).ready(function() {
 	init();
 	beingCalled();
 
-	$(window).scroll(function() {
+	$('#bg').scroll(function() {
 		moveProps();
 		sCount++;
 
-		if($(document).scrollLeft() + $(window).width() >= $(document).width()) {
+		if($('#bg').scrollLeft() + $(window).width() >= $('#bg')[0].scrollWidth) {
 			if(!loading) {
 				loadTweets();
 				startSpinner();
@@ -71,7 +71,6 @@ var preSCount = 0;
 
 function beingCalled() {
 	setInterval(function() {
-		console.log(sCount);
 		if(sCount != preSCount) {
 			bgSound.play();
 			preSCount = sCount;
@@ -88,6 +87,9 @@ function moveProps() {
 		if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
 		var chimneyHeight = chimneyWidth * 1.5;
 		if(chimneyHeight > $(window).height() * 0.03) chimneyHeight = $(window).height() * 0.03;
+
+		$('#loco').css('width', thumbWidth + 'px')
+		$('#loco').css('left', thumbLeft + 'px');
 
 		$('#chimney').css('width', chimneyWidth)
 				.css('height', chimneyHeight)
@@ -122,11 +124,11 @@ function dayOrNight() {
 		$('#chimney').addClass('night');
 
 		smokeColor = 'white';
-		$('body').css('background-color', 'black').css('color', 'white');
+		$('#bg').css('background-color', 'black').css('color', 'white');
 		$('.modal-content').css('background-color', 'white').css('color', 'black');
 	} else {
 		smokeColor = 'black';
-		$('body').css('background-color', 'white').css('color', 'black');
+		$('#bg').css('background-color', 'white').css('color', 'black');
 		$('.modal-content').css('background-color', 'white').css('color', 'black');
 	}
 
@@ -167,7 +169,7 @@ function detectBrowser() {
 		$('.modal-body').append("<p>- 알림: 시설 현대화 작업 중 / 열차 정상 운행<br/>- 알림: 모바일 버전 증축 공사 중<br/><br/>- be sure you're full of NETWORK<br/>- Night Train Service 18:00 - 5:59<br/>- Transfer Available on the BLUE spot</p>");
 		$('.modal-footer').append("<p>stationmaster <a href='https://vimeo.com/freshfleshflash' target='_blank'>Kwon Daye</a></p>");
 
-		$('#chimney').removeClass('hide').addClass('show');
+		//$('#chimney').removeClass('hide').addClass('show');
 
 		renderSmoke();
 	}
@@ -205,7 +207,7 @@ function displayTweets(tweets, first) {
 	}
 
 	var startingTime = new Date(parseDate(tweets[0].created_at)).getTime();
-	var startingLeft = (first) ? 100 : $(document).width() + 100;
+	var startingLeft = (first) ? 100 : $('#bg')[0].scrollWidth + 100;
 
 	for(var i = 0; i < tweets.length; i++) {
 		var id = tweets[i].id_str;
@@ -235,12 +237,12 @@ function displayTweets(tweets, first) {
 
 		var t = new Tweet(id, text, left, top);
 
-		$('body').append(t.html());
+		$('#bg').append(t.html());
 	}
 
-	if(!($(document).width() > $(window).width())) {
+	if(!($('#bg')[0].scrollWidth > $(window).width())) {
 		console.log("append blank");
-		$('body').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
+		//$('body').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
 	}
 
 	if(first) {
@@ -262,8 +264,10 @@ function getThumbInfo() {
 
 	var scrollbarArea = $(window).width() - arrowWidth * 2;
 
-	thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
-	thumbWidth = scrollbarArea * $(window).width() / $(document).width();
+	//thumbLeft = math_map($(document).scrollLeft(), 0, $(document).width(), arrowWidth, $(window).width() - arrowWidth);
+	//thumbWidth = scrollbarArea * $(window).width() / $(document).width();
+	thumbLeft = math_map($('#bg').scrollLeft(), 0, $('#bg')[0].scrollWidth, arrowWidth, $(window).width() - arrowWidth);
+	thumbWidth = scrollbarArea * $(window).width() / $('#bg')[0].scrollWidth;
 }
 
 var prePos = 0;
@@ -347,7 +351,7 @@ function resizeSpace() {
 	// gap = $(window).height() / (maxQueryCount * 2 + 1);
 	gap = $(window).height() / (maxQueryCount * 2 + 3);
 	var fontSize = gap * 0.55;
-	$('body').css('font-size', fontSize + "px");
+	$('#bg').css('font-size', fontSize + "px");
 
 	var question = "This is the end?";
 	var questionDivSize = question.length * fontSize * 0.8;
@@ -487,7 +491,7 @@ function startSpinner() {
 
 	spinner = new Spinner(opts);
 
-	spinner.spin($('body')[0]);
+	spinner.spin($('#bg')[0]);
 	$('#question').css('display', 'block');
 
 	var preIsNight = isNight;
@@ -500,7 +504,7 @@ function startSpinner() {
 
 			opts = (preIsNight) ? nightOpts : dayOpts;
 			spinner = new Spinner(opts);
-			spinner.spin($('body')[0]);
+			spinner.spin($('#bg')[0]);
 		}
 	}, 100);
 }
