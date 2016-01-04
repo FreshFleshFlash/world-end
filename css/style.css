@@ -6,7 +6,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .modal-content {
@@ -101,12 +101,8 @@ div.tweet {
     margin: 0;
     font-style: normal;
     font-family: Helvetica, Arial, sans-serif;
-    font-weight: normal;
-    z-index: 1;
-}
-
-#bg.night > div.tweet {
     font-weight: lighter;
+    z-index: 1;
 }
 
 #question {
@@ -116,13 +112,9 @@ div.tweet {
     top: 50%;
     display: none;
     font-family: Helvetica, Arial, sans-serif;
-    font-weight: normal;
+    font-weight: lighter;
     font-style: normal;
     z-index: 99;
-}
-
-#bg.night > #question {
-    font-weight: lighter;
 }
 
 .blank {

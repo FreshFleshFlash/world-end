@@ -95,11 +95,11 @@ function controlChimney() {
 	var chimneyWidth = thumbWidth * 0.04;
 	if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
 
-	$('#chimney').css('width', chimneyWidth).css('left', thumbLeft + thumbWidth - 5 - chimneyWidth*1.6);
+	$('#chimney').css('left', thumbLeft + thumbWidth - 5 - chimneyWidth*1.6).css('width', chimneyWidth);
 
 	$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
 	smokeR = chimneyWidth * 0.2;
-	smokeX = canvas.width - chimneyWidth*1.5 - 2.5;
+	smokeX = canvas.width - chimneyWidth*1.6 - 5;
 	smokeY = canvas.height - $('#chimney').height()  - smokeR * 2.5;
 
 	$(window).mousemove(function(e) {
@@ -196,7 +196,7 @@ function displayTweets(tweets, first) {
 		text = text.replace(/#(\w+)/gi, '<a href="http://twitter.com/search?q=%23$1" target="_blank"><b>#$1</b></a>');
 		text = text.replace(/@(\w+)/gi, '<a href="http://twitter.com/$1" target="_blank"><b>@$1</b></a>');
 
-		if(text[text.length - 1] == "��") text = text.slice(0, text.length - 1);
+		if(text[text.length - 1] == "…") text = text.slice(0, text.length - 1);
 
 		var time = new Date(parseDate(tweets[i].created_at));
 		time = time.toString();
