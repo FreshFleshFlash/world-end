@@ -33,7 +33,7 @@ $(window).on('beforeunload', function(){
 $(document).ready(function() {
 	$('#myModal').modal();
 
-	var bgSound = new Audio('data/train.mp3');
+	var bgSound = new Audio('data/loco.mp3');
 	bgSound.volume = 0.6;
 	bgSound.loop = true;
 
