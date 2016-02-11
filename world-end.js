@@ -25,6 +25,10 @@ var particles = [];
 var lastGeneratingTime = new Date().getTime();
 var smokeX, smokeY, smokeR, smokeColor;
 
+var thumbLeft;
+var thumbWidth;
+
+
 $(window).on('beforeunload', function(){
 	$('#chimney').css('display', 'none');
 	$('#bg').scrollLeft(0);
@@ -37,6 +41,9 @@ $(document).ready(function() {
 	bgSound.volume = 1.0;
 	bgSound.loop = true;
 
+	thumbLeft = 0;
+	thumbWidth = getThumbInfo()['thumbWidth'];
+
 	callAPI(true);
 	dayOrNight();
 	resizeSpace();
@@ -44,9 +51,24 @@ $(document).ready(function() {
 
 	callAudio(bgSound);
 
-	detectMouse();
+
+
+
+
+	$(window).bind('mousewheel', function(e) {
+		var preScroll = $('#bg').scrollLeft();
+		$('#bg').scrollLeft(preScroll - e.originalEvent.wheelDeltaX);
+
+		return false;
+	});
+
+
 
 	$('#bg').scroll(function() {
+
+		thumbLeft = getThumbInfo()['thumbLeft'];
+		thumbWidth = getThumbInfo()['thumbWidth'];
+
 		controlChimney();
 		sCount++;
 
@@ -73,6 +95,18 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	$(window).mousemove(function(e) {
+		if((e.clientY >= $(window).height() - 17) && (e.clientY <= $(window).height()) && (e.clientX >= thumbLeft) && (e.clientX <= thumbLeft + thumbWidth)) {
+			$('#chimney').addClass('over');
+		} else {
+			$('#chimney').removeClass('over');
+		}
+	});
+
+	$(window).mouseleave(function() {
+		$('#chimney').removeClass('over');
+	});
 });
 
 var preSCount = 0;
@@ -90,23 +124,6 @@ function callAudio(bgSound) {
 	}, 100);
 }
 
-function detectMouse() {
-	var thumbLeft = getThumbInfo()['thumbLeft'];
-	var thumbWidth = getThumbInfo()['thumbWidth'];
-
-	$(window).mousemove(function(e) {
-		if((e.clientY >= $(window).height() - 17) && (e.clientY <= $(window).height()) && (e.clientX >= thumbLeft) && (e.clientX <= thumbLeft + thumbWidth)) {
-			$('#chimney').addClass('over');
-		} else {
-			$('#chimney').removeClass('over');
-		}
-	});
-
-	$(window).mouseleave(function() {
-		$('#chimney').removeClass('over');
-	});
-}
-
 function controlChimney() {
 	var thumbLeft = getThumbInfo()['thumbLeft'];
 	var thumbWidth = getThumbInfo()['thumbWidth'];
@@ -114,11 +131,11 @@ function controlChimney() {
 	var chimneyWidth = thumbWidth * 0.04;
 	if(chimneyWidth > $(window).width() * 0.01) chimneyWidth = $(window).width() * 0.01;
 
-	$('#chimney').css('left', thumbLeft + thumbWidth - 5 - chimneyWidth*1.6).css('width', chimneyWidth);
+	$('#chimney').css('left', thumbLeft + thumbWidth - 5 - chimneyWidth * 1.6).css('width', chimneyWidth);
 
 	$('#smokeCanvas').css('left', thumbLeft + thumbWidth - canvas.width);
 	smokeR = chimneyWidth * 0.2;
-	smokeX = canvas.width - chimneyWidth*1.6 - 5;
+	smokeX = canvas.width - chimneyWidth * 1.6 - 5;
 	smokeY = canvas.height - $('#chimney').height()  - smokeR * 2.5;
 }
 
@@ -235,6 +252,11 @@ function displayTweets(tweets, first) {
 	}
 
 	controlChimney();
+
+
+
+
+
 	loading = false;
 }
 
@@ -262,7 +284,7 @@ var prePos = 0;
 var trainSpeed;
 
 function getTrainSpeed() {
-	var thumbLeft = getThumbInfo()['thumbLeft'];
+	//var thumbLeft = getThumbInfo()['thumbLeft'];
 
 	var currentPos = thumbLeft;
 	trainSpeed = Math.abs(currentPos - prePos);
