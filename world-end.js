@@ -1,5 +1,5 @@
 /*15-10-13 Kwon Daye*/
-/*last modified: 15-12-22*/
+/*last modified: 16-02-11*/
 var browserType = "";
 var gap;
 
@@ -34,7 +34,7 @@ $(document).ready(function() {
 	$('#myModal').modal();
 
 	var bgSound = new Audio('data/loco.mp3');
-	bgSound.volume = 0.6;
+	bgSound.volume = 1.0;
 	bgSound.loop = true;
 
 	callAPI(true);
@@ -43,6 +43,8 @@ $(document).ready(function() {
 	detectBrowser();
 
 	callAudio(bgSound);
+
+	detectMouse();
 
 	$('#bg').scroll(function() {
 		controlChimney();
@@ -88,6 +90,23 @@ function callAudio(bgSound) {
 	}, 100);
 }
 
+function detectMouse() {
+	var thumbLeft = getThumbInfo()['thumbLeft'];
+	var thumbWidth = getThumbInfo()['thumbWidth'];
+
+	$(window).mousemove(function(e) {
+		if((e.clientY >= $(window).height() - 17) && (e.clientY <= $(window).height()) && (e.clientX >= thumbLeft) && (e.clientX <= thumbLeft + thumbWidth)) {
+			$('#chimney').addClass('over');
+		} else {
+			$('#chimney').removeClass('over');
+		}
+	});
+
+	$(window).mouseleave(function() {
+		$('#chimney').removeClass('over');
+	});
+}
+
 function controlChimney() {
 	var thumbLeft = getThumbInfo()['thumbLeft'];
 	var thumbWidth = getThumbInfo()['thumbWidth'];
@@ -101,18 +120,6 @@ function controlChimney() {
 	smokeR = chimneyWidth * 0.2;
 	smokeX = canvas.width - chimneyWidth*1.6 - 5;
 	smokeY = canvas.height - $('#chimney').height()  - smokeR * 2.5;
-
-	$(window).mousemove(function(e) {
-		if((e.clientY >= $(window).height() - 17) && (e.clientY <= $(window).height()) && (e.clientX >= thumbLeft) && (e.clientX <= thumbLeft + thumbWidth)) {
-			$('#chimney').addClass('over');
-		} else {
-			$('#chimney').removeClass('over');
-		}
-	});
-
-	$(window).mouseleave(function() {
-		$('#chimney').removeClass('over');
-	});
 }
 
 function dayOrNight() {
@@ -171,11 +178,11 @@ function detectBrowser() {
 		$('.modal-body').html("<p>Firefox version is not ready yet.<br/><br/>Please use CHROME, IE, OPERA or SAFARI browser.</p>");
 	}
 
-	console.log(info + "\n" + browserType);
+	//console.log(info + "\n" + browserType);
 }
 
 function displayTweets(tweets, first) {
-	console.log(tweets.length);
+	//console.log(tweets.length);
 
 	var lines = [];
 	for(var i = 0; i < maxQueryCount; i++) {
@@ -202,7 +209,7 @@ function displayTweets(tweets, first) {
 		time = time.toString();
 		time = time.split("(")[0];
 
-		text = time+ " " + user + " " + text;
+		text = time + " " + user + " " + text;
 
 		var interval = new Date(parseDate(tweets[i].created_at)).getTime() - startingTime;
 		var left = startingLeft + interval / 20;
@@ -217,7 +224,7 @@ function displayTweets(tweets, first) {
 	}
 
 	if(!($('#bg')[0].scrollWidth > $(window).width())) {
-		console.log("append blank");
+		//console.log("append blank");
 		$('#bg').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
 	}
 
@@ -280,7 +287,7 @@ var tweets = [];
 var tempTweets = [];
 
 function callAPI(first) {
-	console.log("callAPI " + callCount++);
+	//console.log("callAPI " + callCount++);
 
 	var sinceId = (first) ? 0 : tweets[tweets.length - 1].id_str;
 
