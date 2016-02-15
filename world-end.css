@@ -100,12 +100,11 @@ body {
 
 div.tweet {
     display: inline-block;
+    visibility: hidden;
     position: absolute;
     white-space: nowrap;
     margin: 0;
     z-index: 1;
-
-    visibility: hidden;
 }
 
 #question {
@@ -128,4 +127,8 @@ div.tweet {
     position: absolute;
     width: 100%;
     text-align: center;
+}
+
+.title a {
+    color: inherit;
 }

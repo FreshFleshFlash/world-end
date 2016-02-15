@@ -56,7 +56,7 @@ $(document).ready(function() {
 	$('#bg').scroll(function() {
 		if(!tFlag) {
 			$('.title').animate({opacity: 0}, 800);
-			$('.tweet').delay(800).css({opacity: 0.0, visibility: 'visible'}).animate({opacity: 1}, 800);
+			$('.tweet').delay(800).css({opacity: 0, visibility: 'visible'}).animate({opacity: 1}, 800);
 
 			tFlag = true;
 		} else {
@@ -120,7 +120,7 @@ function appendTitle() {
 	}
 
 	var title = '<div class="title" style="top:' + lines[2] + 'px">\'Where is the end of the world?\'</div>'
-			+ '<div class="title" style="top:' + lines[3] + 'px">by <i>Kwon Daye</i></div>'
+			+ '<div class="title" style="top:' + lines[3] + 'px">by <a href="mailto:pharmacystic@gmail.com"><i>Kwon Daye</i></a></div>'
 			+ '<div class="title" style="top:' + lines[4] + 'px">A train bound for the end of endless world</div>'
 			+ '<div class="title" style="top:' + lines[6] + 'px">Night Train Service 18:00 - 5:59</div>'
 			+ '<div class="title" style="top:' + lines[7] + 'px">For Automatic Operation, press Space Bar</div>';
