@@ -1,5 +1,5 @@
 /*15-10-13 Kwon Daye*/
-/*last modified: 16-02-11*/
+/*last modified: 16-02-15*/
 var browserType = "";
 var gap;
 
@@ -28,6 +28,7 @@ var smokeX, smokeY, smokeR, smokeColor;
 var thumbLeft;
 var thumbWidth;
 
+var tFlag = false;
 
 $(window).on('beforeunload', function(){
 	$('#chimney').css('display', 'none');
@@ -35,8 +36,6 @@ $(window).on('beforeunload', function(){
 });
 
 $(document).ready(function() {
-	$('#myModal').modal();
-
 	var bgSound = new Audio('data/loco.mp3');
 	bgSound.volume = 1.0;
 	bgSound.loop = true;
@@ -44,27 +43,25 @@ $(document).ready(function() {
 	thumbLeft = 0;
 	thumbWidth = getThumbInfo()['thumbWidth'];
 
-	callAPI(true);
 	dayOrNight();
 	resizeSpace();
 	detectBrowser();
 
+	appendTitle();
+
+	callAPI(true);
+
 	callAudio(bgSound);
 
-
-
-
-
-	$(window).bind('mousewheel', function(e) {
-		var preScroll = $('#bg').scrollLeft();
-		$('#bg').scrollLeft(preScroll - e.originalEvent.wheelDeltaX);
-
-		return false;
-	});
-
-
-
 	$('#bg').scroll(function() {
+		if(!tFlag) {
+			$('.title').animate({opacity: 0}, 800);
+			$('.tweet').delay(800).css({opacity: 0.0, visibility: 'visible'}).animate({opacity: 1}, 800);
+
+			tFlag = true;
+		} else {
+			$('.tweet').css('visibility', 'visible');
+		}
 
 		thumbLeft = getThumbInfo()['thumbLeft'];
 		thumbWidth = getThumbInfo()['thumbWidth'];
@@ -78,6 +75,13 @@ $(document).ready(function() {
 				startSpinner();
 			}
 		}
+	});
+
+	$(window).bind('mousewheel', function(e) {
+		var preScroll = $('#bg').scrollLeft();
+		$('#bg').scrollLeft(preScroll - e.originalEvent.wheelDeltaX);
+
+		return false;
 	});
 
 	$(window).keypress(function(e) {
@@ -108,6 +112,21 @@ $(document).ready(function() {
 		$('#chimney').removeClass('over');
 	});
 });
+
+function appendTitle() {
+	var lines = [];
+	for(var i = 0; i < maxQueryCount; i++) {
+		lines[i] = gap * 2 + i * gap * 2;
+	}
+
+	var title = '<div class="title" style="top:' + lines[2] + 'px">\'Where is the end of the world?\'</div>'
+			+ '<div class="title" style="top:' + lines[3] + 'px">by <i>Kwon Daye</i></div>'
+			+ '<div class="title" style="top:' + lines[4] + 'px">A train bound for the end of endless world</div>'
+			+ '<div class="title" style="top:' + lines[6] + 'px">Night Train Service 18:00 - 5:59</div>'
+			+ '<div class="title" style="top:' + lines[7] + 'px">For Automatic Operation, press Space Bar</div>';
+
+	$('#bg').append(title);
+}
 
 var preSCount = 0;
 
@@ -253,10 +272,6 @@ function displayTweets(tweets, first) {
 
 	controlChimney();
 
-
-
-
-
 	loading = false;
 }
 
@@ -285,7 +300,6 @@ var trainSpeed;
 
 function getTrainSpeed() {
 	//var thumbLeft = getThumbInfo()['thumbLeft'];
-
 	var currentPos = thumbLeft;
 	trainSpeed = Math.abs(currentPos - prePos);
 	if($('#bg').scrollLeft() + $(window).width() >= $('#bg')[0].scrollWidth) trainSpeed = 1;
@@ -353,7 +367,7 @@ function parseDate(strDate) {
 
 function resizeSpace() {
 	gap = $(window).height() / (maxQueryCount * 2 + 3);
-	var fontSize = gap * 0.55;
+	var fontSize = gap * 0.5;
 	$('#bg').css('font-size', fontSize + "px");
 
 	var question = "This is the end?";
@@ -449,7 +463,6 @@ function twitterAPI(api, params, callback) {
 	params.oauth_consumer_key = myTwitterConfig.consumerKey;
 	params.oauth_token = myTwitterConfig.accessToken;
 
-	// callback占쏙옙 �뤾낯�� �륅옙占쎈벤釉�릯占� 占쎈봽�� �얜떯由곁킄占� 占썩뫁�붹에占� 餓ο옙 野껋럩�� 占쎈Ŧ猷� 占쎌빘苑�옙�뺣뼄.
 	if (!params.callback && callback) {
 		params.callback = 'ssh'+(Math.random()+'').replace('0.','');
 		window[params.callback] = callback;
@@ -461,14 +474,12 @@ function twitterAPI(api, params, callback) {
 		parameters: params
 	};
 
-	// Oauth 占쎈챷弛녷꽴占쏙옙占�
 	OAuth.setTimestampAndNonce(oauthMessage);
 	OAuth.SignatureMethod.sign(oauthMessage, {
 		consumerSecret: myTwitterConfig.consumerSecret,
 		tokenSecret: myTwitterConfig.tokenSecret
 	});
 
-	// Oauth 占쎈챷弛놅옙�뤿연 URL�귐뗪쉘(json type)
 	var jsonUrl = OAuth.addToURL(oauthMessage.action, oauthMessage.parameters);
 
 	$.ajax({

@@ -1,5 +1,5 @@
 /*15-10-13 Kwon Daye*/
-/*last modified: 16-02-11*/
+/*last modified: 16-02-15*/
 body {
     position: absolute;
     width: 100%;
@@ -104,6 +104,8 @@ div.tweet {
     white-space: nowrap;
     margin: 0;
     z-index: 1;
+
+    visibility: hidden;
 }
 
 #question {
@@ -120,4 +122,10 @@ div.tweet {
 
 .blank {
     position: absolute;
+}
+
+.title {
+    position: absolute;
+    width: 100%;
+    text-align: center;
 }
