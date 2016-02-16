@@ -1,5 +1,5 @@
 /*15-10-13 Kwon Daye*/
-/*last modified: 16-02-15*/
+/*last modified: 16-02-16*/
 body {
     position: absolute;
     width: 100%;
@@ -67,6 +67,7 @@ body {
 
 #chimney {
     position: fixed;
+    visibility: hidden;
     bottom: 13px;
     height: 8px;
     background-color: #C1C1C1;
@@ -94,6 +95,7 @@ body {
 
 #smokeCanvas {
     position: fixed;
+    visibility: hidden;
     bottom: 17px;
     z-index: 0;
 }

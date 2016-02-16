@@ -1,5 +1,5 @@
 /*15-10-13 Kwon Daye*/
-/*last modified: 16-02-15*/
+/*last modified: 16-02-16*/
 var browserType = "";
 var gap;
 
@@ -56,7 +56,7 @@ $(document).ready(function() {
 	$('#bg').scroll(function() {
 		if(!tFlag) {
 			$('.title').animate({opacity: 0}, 800);
-			$('.tweet').delay(800).css({opacity: 0, visibility: 'visible'}).animate({opacity: 1}, 800);
+			$('.tweet, #chimney, #smokeCanvas').delay(800).css({opacity: 0, visibility: 'visible'}).animate({opacity: 1}, 800);
 
 			tFlag = true;
 		} else {
