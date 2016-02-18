@@ -90,7 +90,7 @@ $(document).ready(function() {
 			aFlag = !aFlag;
 			if(aFlag) {
 				autoTrainInterval = setInterval(function () {
-					var autoTrainSpeed = 1.7;
+					var autoTrainSpeed = 1.7
 					var preScroll = $('#bg').scrollLeft();
 					$('#bg').scrollLeft(preScroll + autoTrainSpeed);
 				}, 10);
@@ -122,6 +122,8 @@ function appendTitle() {
 	var title = '<div class="title" style="top:' + lines[2] + 'px">\'Where is the end of the world?\'</div>'
 			+ '<div class="title" style="top:' + lines[3] + 'px">by <a href="mailto:pharmacystic@gmail.com"><i>Kwon Daye</i></a></div>'
 			+ '<div class="title" style="top:' + lines[4] + 'px">A train bound for the end of endless world</div>'
+			//+ '<div class="title" style="top:' + lines[4] + 'px">Real-time tweets + Infinite scroll</div>'
+
 			+ '<div class="title" style="top:' + lines[6] + 'px">Night Train Service 18:00 - 5:59</div>'
 			+ '<div class="title" style="top:' + lines[7] + 'px">For Automatic Operation, press Space Bar</div>';
 
@@ -425,6 +427,8 @@ function timeFormat(time) {
 	var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 	var hour = (time.getHours() < 12) ? time.getHours() : time.getHours() - 12;
+	var hour = time.getHours();
+
 	var minute = (time.getMinutes() < 10) ? "0" + time.getMinutes() : time.getMinutes();
 	var second = time.getSeconds();
 	var ampm = (time.getHours() < 12) ? "AM" : "PM";
@@ -457,7 +461,7 @@ var myTwitterConfig = {
 function twitterAPI(api, params, callback) {
 	if(!api.match(/\.json$/)) api += '.json';
 
-	// 占쎈슢�よ첋紐낃숲 疫꿸퀡��옙紐낅샒
+	// �좎럥��옙�덉쾵榮먮굛�� �リ옇�∽옙占쎌삕榮먮굝��
 	params.oauth_cversion = '1.0';
 	params.oauth_signature_method = 'HMAC-SHA1';
 	params.oauth_consumer_key = myTwitterConfig.consumerKey;
