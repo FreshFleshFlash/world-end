@@ -1,5 +1,5 @@
-/*15-10-13 Kwon Daye*/
-/*last modified: 16-02-19*/
+/*14-06-09 Kwon Daye*/
+/*last modified: 16-04-09*/
 body {
     position: absolute;
     width: 100%;
@@ -7,10 +7,6 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-}
-
-.modal-content {
-    font-size: 12pt;
 }
 
 #bg {
@@ -21,11 +17,9 @@ body {
     padding: 0;
     overflow-x: scroll;
     overflow-y: hidden;
-
     font-style: normal;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: lighter;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -132,12 +126,25 @@ div.tweet {
     position: absolute;
 }
 
-.title {
+#title {
     position: absolute;
-    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
 }
 
-.title a {
-    color: inherit;
+#tip {
+    position: fixed;
+    left: 0.5%;
+    bottom: 0px;
+    height: 16px;
+    font-weight: bold;
+    font-size: 7pt;
+    color: black;
+}
+
+span {
+    visibility: hidden;
+    position: fixed;
 }
