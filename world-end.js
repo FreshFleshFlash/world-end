@@ -1,5 +1,5 @@
 /*14-06-09 Kwon Daye*/
-/*last modified: 16-04-09*/
+/*last modified: 16-04-26*/
 var browserType = "";
 var gap;
 
@@ -51,7 +51,11 @@ $(document).ready(function () {
     resizeSpace();
     detectBrowser();
     attachTip();
-    callAPI(true);
+
+    if(browserType != "others") {
+        callAPI(true);
+    }
+
     callAudio(bgSound);
 
     $('#bg').scroll(function () {
@@ -219,13 +223,21 @@ function detectBrowser() {
         if (/(chrome|safari)/i.test(info)) {
             browserType = "webkit";
             wordGap = 5;
+        } else if (/trident/i.test(info)) {
+            browserType = "ms";
         }
-        else if (/trident/i.test(info)) browserType = "ms";
 
         $('#chimney').css('display', 'block');
         renderSmoke();
     } else {
         browserType = "others";
+        if(/firefox/i.test(info)) {
+            alert("Sorry. Firefox version is under repair.\n" +
+                "Please use Chrome,  Safari,  Opera, or IE browser.");
+        } else {
+            alert("Sorry. This browser version is under repair.\n" +
+                "Please use Chrome,  Safari,  Opera, or IE browser.");
+        }
     }
 
     //console.log(info + "\n" + browserType);
