@@ -36,7 +36,7 @@ var tweets = (function () {
                 user = tempTweets[id].user.screen_name;
                 pureText = tempTweets[id].text.replace(/@(\w+)/gi, "");
 
-                if (!((/world/i.test(pureText)) && (/world/i.test(pureText)))) {
+                if (!((/world/i.test(pureText)) && (/end/i.test(pureText)))) {
                     tempTweets.splice(id, 1);
                 } else {
                     id++;

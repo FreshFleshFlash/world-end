@@ -12,6 +12,7 @@ var browser = (function () {
         } else if (/trident/i.test(info)) {
             type = 'ms';
             arrowWidth = 30;
+            $('#bg').addClass("ie");
         } else if (/firefox/i.test(info)) {
             type = 'firefox';
             alert('Sorry. Firefox version is under repair.\nPlease use Chrome, Safari, or Opera browser.');

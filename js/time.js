@@ -1,5 +1,5 @@
 var time = (function () {
-    var dayHour = 0;
+    var dayHour = 6;
     var nightHour = 18;
     var isNight, preIsNight;
 

@@ -3,7 +3,7 @@ $(window).on('beforeunload', function () {
 });
 
 $(document).ready(function () {
-    if(browser.type == 'firefox' || browser.type == 'others') {
+    if (browser.type == 'firefox' || browser.type == 'others') {
         return;
     }
 
@@ -56,13 +56,15 @@ $(document).ready(function () {
         return false;
     });
 
-    $(window).mousemove(function (e) {
-        chimney.detectMouseOver(e);
-    });
+    if (browser.type == 'webkit') {
+        $(window).mousemove(function (e) {
+            chimney.detectMouseOver(e);
+        });
 
-    $(window).mouseleave(function () {
-        $('#chimney').removeClass('over');
-    });
+        $(window).mouseleave(function () {
+            $('#chimney').removeClass('over');
+        });
+    }
 
     $(window).keypress(function (e) {
         if (e.which == 32) {
