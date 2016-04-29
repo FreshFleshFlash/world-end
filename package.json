@@ -1,0 +1,25 @@
+{
+  "name": "world-end",
+  "version": "1.0.0",
+  "description": "Where is the end of the world?",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreshFleshFlash/world-end.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FreshFleshFlash/world-end/issues"
+  },
+  "homepage": "https://github.com/FreshFleshFlash/world-end#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3"
+  }
+}
