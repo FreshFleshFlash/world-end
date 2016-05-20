@@ -9,7 +9,6 @@ $(document).ready(function () {
 
     tweets.callAPI(true);
     smoke.render();
-    tip.attach();
     sound.control();
 
     setInterval(function () {
@@ -26,17 +25,11 @@ $(document).ready(function () {
             title.disappear();
 
             setTimeout(function () {
-                tip.appear();
                 tipFlag = true;
-                wordFlag = true;
             }, 1000);
 
         } else {
             $('.tweet').css('visibility', 'visible');
-        }
-
-        if (wordFlag) {
-            tip.control();
         }
 
         if ($('#bg').scrollLeft() + $(window).width() >= $('#bg')[0].scrollWidth) {
@@ -68,14 +61,6 @@ $(document).ready(function () {
 
     $(window).keypress(function (e) {
         if (e.which == 32) {
-            if (tipFlag) {
-                tipFlag = false;
-                $('#tip').animate({opacity: 0}, 2000, function () {
-                    wordFlag = false;
-                    tip.disappear($(this));
-                });
-            }
-
             autoFlag = !autoFlag;
 
             if (autoFlag) {

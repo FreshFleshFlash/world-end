@@ -100,6 +100,13 @@ var tweets = (function () {
             $('#bg').append('<p class="blank" style="left:' + ($(window).width() * 1.1) + 'px">&nbsp</p>');
         }
 
+        if (tipFlag && tweets.length < maxQueryCount) {
+            var tipTime = new Date(parseDate(tweets[0].created_at)).toString().split("(")[0];
+            var lineId = Math.floor(Math.random() * lines.length);
+            $('#bg').append('<div class="tweet tip" style="left:' + startingLeft + 'px; top:' + lines[lineId] + 'px">' + tipTime + ' <a href="http://freshfleshflash.com/" target="_blank"><b>TrainConductor</b></a> Announcement <a><b>@Passengers</b></a> To start and stop automatic operation, press space bar!</div>');
+            tipFlag = false;
+        }
+
         if (first) {
             first = false;
         } else {
@@ -126,7 +133,11 @@ var tweets = (function () {
     var parseDate = function (strDate) {
         var v = strDate.split(' ');
         return Date.parse(v[1] + " " + v[2] + ", " + v[5] + " " + v[3] + " UTC");
-    }
+    };
+
+    var chooseRandom = function (totalNumber) {
+
+    };
 
     return {
         load: load,

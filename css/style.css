@@ -132,17 +132,11 @@ div.tweet {
     text-align: center;
 }
 
-#tip {
-    position: fixed;
-    left: 0.5%;
-    bottom: 0px;
-    height: 16px;
-    font-weight: bold;
-    font-size: 7pt;
-    color: black;
-}
-
 span {
     visibility: hidden;
     position: fixed;
+}
+
+.tip {
+    position: absolute;
 }
